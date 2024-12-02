@@ -17,6 +17,22 @@ from rest_framework_simplejwt.tokens import AccessToken
 from django.http import HttpResponse
 import json
 
+def realizar_login(request):
+    if request.method == 'GET':
+        return render(request,'usuarios/login.html')
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            usuarios={
+                'usuarios':User.objects.all()
+            }
+            return render(request,'usuarios/usuarios.html',usuarios)
+        return HttpResponse("Usuário inválido!")
+    else:
+        return HttpResponse("Bad request!")
+
 class AutenticarUser(APIView):
     permission_classes = [IsAuthenticated]
 

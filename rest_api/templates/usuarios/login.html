@@ -1,0 +1,12 @@
+{% extends 'usuarios/base.html' %}
+{% block conteudo %}
+<form method="post">
+    {% csrf_token %}
+    <div style="text-align: center;" class="container">
+        <h1>Tela de Login</h1>
+        Username <input name="username" class="form-control-sm" type="text">
+        Senha <input name="password" class="form-control-sm" type="password">
+        <button class="form-control-sm">Login</button>
+    </div>
+</form>
+{% endblock %}
