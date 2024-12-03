@@ -12,7 +12,7 @@ router.register(r'Disciplinas',getDisciplinas)
 urlpatterns = [
     path('api',include(router.urls)),
     path('',views.realizar_login,name='listar_usuario'),
-    path('usuarios/disciplinas.htm',views.visualizar_disciplinas,name='listar_disciplinas'),
+    path('usuarios/disciplinas.html',views.visualizar_disciplinas,name='listar_disciplinas'),
     path('admin/', admin.site.urls),
     path('Disciplinas/<str:cod_disciplina>',views.get_by_cod),
     path('protectview',ProtectedView.as_view()),
