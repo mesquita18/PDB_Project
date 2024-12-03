@@ -33,6 +33,13 @@ def realizar_login(request):
     else:
         return HttpResponse("Bad request!")
 
+@api_view(['GET'])
+def visualizar_disciplinas(request):
+    disciplinas={
+        'disciplinas':Disciplina.objects.all()
+    }
+    return render(request,'usuarios/disciplinas.html',disciplinas)
+
 class AutenticarUser(APIView):
     permission_classes = [IsAuthenticated]
 
