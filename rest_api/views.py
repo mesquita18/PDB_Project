@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserSerializer,Disciplina,DisciplinaSerializer
+from .models import UserSerializer,Disciplina,DisciplinaSerializer,Aluno,AlunoSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -13,6 +13,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken
 from django.http import HttpResponse
 import json
@@ -75,6 +76,32 @@ class getDisciplinas(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Disciplina.objects.all()
     serializer_class = DisciplinaSerializer
+
+class getAlunos(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Aluno.objects.all()
+    serializer_class = AlunoSerializer
+
+class postAlunos(APIView):
+    def postAluno(self,request):
+        nome_aluno = request.POST.get('nome')
+        cpf_aluno = request.POST.get('cpf')
+        aluno = Aluno(nome=nome_aluno, cpf=cpf_aluno)
+        if verifica(aluno):
+            try:
+                aluno.full_clean()
+                aluno.save()
+            except ValidationError as e:
+                print(e)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+def verifica(Aluno):
+    nome_aluno = Aluno.nome
+    cpf_aluno = Aluno.cpf
+    if Aluno.objects.filter(cpf=cpf_aluno).exclude(nome=nome_aluno).exists():
+        return False
+    return True
 
 @api_view(['GET'])
 def get_by_cod(request,cod_disciplina):
