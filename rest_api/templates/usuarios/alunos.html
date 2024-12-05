@@ -59,31 +59,25 @@
     </style>
 </head>
 <body>
-    <form action="% url 'listar_disciplinas' %" method="get">
+    <form action="% url 'listar_alunos' %" method="get">
         <div class="container">
-            <h1 class="text-primary">Disciplinas Cadastradas</h1>
+            <h1 class="text-primary">Alunos Cadastradas</h1>
             <table border="1" cellpadding="10" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>nome_disciplina</th>
-                        <th>carga_horaria</th>
-                        <th>periodo</th>
+                        <th>nome</th>
+                        <th>cpf</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for disciplina in page_obj %}
+                    {% for aluno in page_obj %}
                     <tr>
-                        <td>
-                            <a href="{% url 'detalhar_disciplina' disciplina.cod_disciplina %}">
-                                {{ disciplina.nome_disciplina }}
-                            </a>
-                        </td>
-                        <td>{{disciplina.carga_horaria}}</td>
-                        <td>{{disciplina.periodo}}</td>
+                        <td>{{aluno.nome}}</td>
+                        <td>{{aluno.cpf}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table><br>
+            </table>
             <div class="pagination">
                 {% if page_obj.has_previous %}
                     <a href="?page=1">&laquo; Primeira</a>

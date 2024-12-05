@@ -42,16 +42,19 @@ def detalhar_disciplina(request,cod_disciplina):
 
 @api_view(['GET'])
 def visualizar_disciplinas(request):
-    '''
-    disciplinas={
-        'disciplinas':Disciplina.objects.all()
-    }
-    '''
     disciplinas = Disciplina.objects.all()
     paginator = Paginator(disciplinas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'usuarios/disciplinas.html', {'page_obj': page_obj})
+
+@api_view(['GET'])
+def visualizar_alunos(request):
+    alunos = Aluno.objects.all()
+    paginator = Paginator(alunos, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'usuarios/alunos.html', {'page_obj': page_obj})
 
 class AutenticarUser(APIView):
     permission_classes = [IsAuthenticated]
@@ -93,27 +96,6 @@ class getAlunos(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Aluno.objects.all()
     serializer_class = AlunoSerializer
-
-'''class postAlunos(APIView):
-    def postAluno(self,request):
-        nome_aluno = request.POST.get('nome')
-        cpf_aluno = request.POST.get('cpf')
-        aluno = Aluno(nome=nome_aluno, cpf=cpf_aluno)
-        if verifica(aluno):
-            try:
-                aluno.full_clean()
-                aluno.save()
-            except ValidationError as e:
-                print(e)
-        else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-def verifica(Aluno):
-    nome_aluno = Aluno.nome
-    cpf_aluno = Aluno.cpf
-    if Aluno.objects.filter(cpf=cpf_aluno).exclude(nome=nome_aluno).exists():
-        return False
-    return True'''
 
 @api_view(['GET'])
 def get_by_cod(request,cod_disciplina):

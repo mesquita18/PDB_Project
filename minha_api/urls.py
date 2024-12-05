@@ -13,6 +13,7 @@ router.register(r'/alunos/view',getAlunos)
 urlpatterns = [
     path('',views.realizar_login,name='listar_usuarios'),
     path('usuarios/disciplinas.html',views.visualizar_disciplinas,name='listar_disciplinas'),
+    path('usuarios/alunos.html',views.visualizar_alunos,name='listar_alunos'),
     path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina'),
     path('admin/', admin.site.urls),
     path('api',include(router.urls)),
