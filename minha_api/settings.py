@@ -130,3 +130,9 @@ REST_FRAMEWORK = {
 SIMPLE_JWT={
     'ACESS_TOKEN_LIFETIME':timedelta(days=10)
 }
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]

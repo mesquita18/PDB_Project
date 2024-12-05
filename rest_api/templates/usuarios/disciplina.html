@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Disciplina</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav style="background-color: aquamarine !important;" class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1"></span>
+        </div>
+    </nav>
+    <div style="text-align: center;" class="container">
+        <h1>{{ disciplina.nome_disciplina }}</h1>
+        <p><strong>Carga Horária:</strong> {{ disciplina.carga_horaria }} horas</p>
+        <p><strong>Período:</strong> {{ disciplina.periodo }}</p>
+        <p><a href="http://127.0.0.1:8000/usuarios/disciplinas.html">Voltar para a lista</a></p>
+    </div>
+</body>
+</html>

@@ -1,22 +1,103 @@
-{% extends 'usuarios/base.html' %}
-{% block conteudo %}
-<form action="% url 'listar_disciplinas' %" method="get">
-    <div class="container">
-        <h1>Disciplinas Cadastradas</h1>
-        <table class="table table-bordered table-striped">
-            <tr>
-                <th>nome_disciplina</th>
-                <th>carga_horaria</th>
-                <th>periodo</th>
-            </tr>
-            {% for disciplina in disciplinas %}
-            <tr>
-                <td>{{disciplina.nome_disciplina}}</td>
-                <td>{{disciplina.carga_horaria}}</td>
-                <td>{{disciplina.periodo}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-</form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            color: #444;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td {
+            color: #555;
+        }
+
+        .no-data {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <form action="% url 'listar_disciplinas' %" method="get">
+        <div class="container">
+            <h1 class="text-primary">Disciplinas Cadastradas</h1>
+            <table border="1" cellpadding="10" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>nome_disciplina</th>
+                        <th>carga_horaria</th>
+                        <th>periodo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for disciplina in page_obj %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detalhar_disciplina' disciplina.cod_disciplina %}">
+                                {{ disciplina.nome_disciplina }}
+                            </a>
+                        </td>
+                        <td>{{disciplina.carga_horaria}}</td>
+                        <td>{{disciplina.periodo}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; Primeira</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                {% endif %}
+        
+                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</body>
+</html>

@@ -15,6 +15,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken
+from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 import json
 
@@ -34,12 +36,22 @@ def realizar_login(request):
     else:
         return HttpResponse("Bad request!")
 
+def detalhar_disciplina(request,cod_disciplina):
+    disciplina = get_object_or_404(Disciplina, cod_disciplina=cod_disciplina)
+    return render(request, 'usuarios/disciplina.html', {'disciplina': disciplina})
+
 @api_view(['GET'])
 def visualizar_disciplinas(request):
+    '''
     disciplinas={
         'disciplinas':Disciplina.objects.all()
     }
-    return render(request,'usuarios/disciplinas.html',disciplinas)
+    '''
+    disciplinas = Disciplina.objects.all()
+    paginator = Paginator(disciplinas, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'usuarios/disciplinas.html', {'page_obj': page_obj})
 
 class AutenticarUser(APIView):
     permission_classes = [IsAuthenticated]
@@ -82,7 +94,7 @@ class getAlunos(viewsets.ModelViewSet):
     queryset = Aluno.objects.all()
     serializer_class = AlunoSerializer
 
-class postAlunos(APIView):
+'''class postAlunos(APIView):
     def postAluno(self,request):
         nome_aluno = request.POST.get('nome')
         cpf_aluno = request.POST.get('cpf')
@@ -101,7 +113,7 @@ def verifica(Aluno):
     cpf_aluno = Aluno.cpf
     if Aluno.objects.filter(cpf=cpf_aluno).exclude(nome=nome_aluno).exists():
         return False
-    return True
+    return True'''
 
 @api_view(['GET'])
 def get_by_cod(request,cod_disciplina):

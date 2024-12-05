@@ -1,11 +1,22 @@
-{% extends 'usuarios/base.html' %}
-{% block conteudo %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Usuários Cadastrados</title>
+  </head>
 <body>
+    <nav style="background-color: aquamarine !important;" class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Usuários Cadastrados</span>
+        </div>
+    </nav>
     <a href="http://127.0.0.1:8000/usuarios/disciplinas.html">Listar as disciplinas</a>
 </body>
 <form action="% url 'listar_usuarios' %">
     <div class="container">
-        <h1>Usuários Cadastrados</h1>
+        <h1 class="text-primary">Usuários Cadastrados</h1>
         <table class="table table-bordered table-striped">
             <tr>
                 <th></th>
@@ -22,4 +33,4 @@
         </table>
     </div>
 </form>
-{% endblock %}
+</html>

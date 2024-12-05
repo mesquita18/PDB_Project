@@ -11,6 +11,9 @@ router.register(r'/disciplinas',getDisciplinas)
 router.register(r'/alunos/view',getAlunos)
 
 urlpatterns = [
+    path('',views.realizar_login,name='listar_usuarios'),
+    path('usuarios/disciplinas.html',views.visualizar_disciplinas,name='listar_disciplinas'),
+    path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina'),
     path('admin/', admin.site.urls),
     path('api',include(router.urls)),
     path('disciplinas/<str:cod_disciplina>',views.get_by_cod),
@@ -22,6 +25,3 @@ urlpatterns = [
     path('token/obter-token',TokenView.as_view()),
     path('token/obter-usuario',AutenticarUser.as_view())
 ]
-
-# path('',views.realizar_login,name='listar_usuario'),
-# path('usuarios/disciplinas.html',views.visualizar_disciplinas,name='listar_disciplinas'),
