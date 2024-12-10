@@ -1,39 +1,33 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuários Cadastrados</title>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
 <body>
-    <nav style="background-color: aquamarine !important;" class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-          <span class="navbar-brand mb-0 h1">Usuários Cadastrados</span>
+    <form action="% url 'listar_usuarios' %" method="get">
+        <div class="container">
+            <h1 class="text-primary">Usuários Cadastrados</h1>
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th></th>
+                    <th>username</th>
+                    <th>e-mail</th>
+                </tr>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{usuario.id_usuario}}</td>
+                        <td>{{usuario.username}}</td>
+                        <td>{{usuario.email}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table><br><br>
+            <p><a href="http://127.0.0.1:8000/usuarios/home.html">Voltar para a página inicial</a></p>
         </div>
-    </nav>
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="http://127.0.0.1:8000/usuarios/disciplinas.html">Listar as disciplinas</a><br>
-        <a href="http://127.0.0.1:8000/usuarios/alunos.html">Listar os alunos</a>
-    </div>
+    </form>
 </body>
-<form action="% url 'listar_usuarios' %">
-    <div class="container">
-        <h1 class="text-primary">Usuários Cadastrados</h1>
-        <table class="table table-bordered table-striped">
-            <tr>
-                <th></th>
-                <th>username</th>
-                <th>e-mail</th>
-            </tr>
-            {% for usuario in usuarios %}
-            <tr>
-                <td>{{usuario.id_usuario}}</td>
-                <td>{{usuario.username}}</td>
-                <td>{{usuario.email}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-</form>
 </html>

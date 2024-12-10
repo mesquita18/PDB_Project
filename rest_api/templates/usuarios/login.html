@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Tela de Login</title>
+    <style>
+      .error-message {
+          color: red;
+          text-align: center; /* Centraliza horizontalmente */
+          margin-top: 10px; /* Adiciona espaço acima da mensagem */
+      }
+      .form-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center; /* Centraliza horizontalmente */
+          justify-content: center; /* Centraliza verticalmente */
+          height: 100vh; /* Ocupa a altura total da página */
+      }
+    </style>
   </head>
   <body>
     <nav style="background-color: aquamarine !important;" class="navbar navbar-light bg-light">
@@ -18,9 +32,12 @@
           <h1>Tela de Login</h1>
           Username <input name="username" class="form-control-sm" type="text">
           Senha <input name="password" class="form-control-sm" type="password">
-          <button class="form-control-sm">Login</button>
+          <button class="form-control-sm">Login</button><br><br>
       </div>
     </form>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    {% if erro %}
+    <br><br><p class="error-message" style="color: red;">{{ erro }}</p>
+    {% endif %}
   </body>
 </html>
