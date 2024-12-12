@@ -159,7 +159,6 @@ def cadastrar_turma(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def visualizar_disciplinas(request):
     disciplinas = Disciplina.objects.all()
