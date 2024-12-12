@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
 from rest_framework import permissions, viewsets
 from django.shortcuts import render,redirect
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view,permission_classes,action
 from rest_framework.response import Response
 from rest_framework import status
 from .models import UserSerializer,Disciplina,DisciplinaSerializer,Aluno,AlunoSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import AuthenticationFailed
@@ -24,6 +24,52 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
+from django.db.models import Count
+
+class AlunoTurmaViewSet(ReadOnlyModelViewSet):
+    queryset = AlunoTurma.objects.all()
+    serializer_class = AlunoTurmaSerializer
+
+class CriarTurmaView(viewsets.ModelViewSet):
+    queryset = Turma.objects.all()
+    serializer_class = TurmaSerializer
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        turma = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    @action(detail=True, methods=['put'], url_path='atualizar-alunos')
+    def put(self,request,pk=None):
+        turma = self.get_object()
+        alunos_turma = AlunoTurma.objects.filter(turma=turma)
+        alunos_turma.delete()
+        novos_alunos = request.data.get('alunos',[])
+        alunos = Aluno.objects.filter(id__in=alunos_ids)
+        turma.alunos.set(alunos)  # Atualiza a relação Many-to-Many
+        turma.save()
+        return Response(TurmaSerializer(turma).data)
+
+class AtualizarTurmaView(viewsets.ModelViewSet):
+    queryset = Turma.objects.all()
+    serializer_class = TurmaSerializer
+    def put(self, request, pk=None):
+        # Obtenha a turma pelo ID (pk)
+        turma = self.get_object()
+        aluno_turma_relations = AlunoTurma.objects.filter(turma=turma)
+        # Conta as relações antes de excluir
+        total_relations = aluno_turma_relations.count()
+        # Exclui as relações
+        aluno_turma_relations.delete()
+        # Obtenha os IDs dos alunos passados na requisição
+        alunos_ids = request.data.get('alunos', [])
+        # Verifique se os IDs dos alunos são válidos
+        alunos = Aluno.objects.filter(id__in=alunos_ids)
+        # Atribua os alunos à turma
+        turma.alunos.set(alunos)  # Atualiza a relação Many-to-Many
+        turma.save()
+        # Retorne a resposta com os dados da turma atualizada
+        return Response(TurmaSerializer(turma).data)
 
 def realizar_cadastro(request):
     if request.method == 'POST':
@@ -83,12 +129,37 @@ def detalhar_disciplina(request,cod_disciplina):
 @permission_classes([IsAuthenticated])
 def visualizar_usuarios(request):
     usuarios = User.objects.all()
-    # paginator = Paginator(usuarios, 10)
-    # page_number = request.GET.get('page')
-    # page_obj = paginator.get_page(page_number)
     return render(request, 'usuarios/usuarios.html', {'usuarios':usuarios})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def visualizar_turmas(request):
+    turmas = Turma.objects.all()
+    serializer = TurmaSerializer(turmas,many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listar_turmas_do_aluno(request, aluno_id):
+    try:
+        aluno = Aluno.objects.get(id=aluno_id)
+        turmas_matriculadas = aluno.aluno_turmas.all()
+        turmas = [rel.turma for rel in turmas_matriculadas]
+        serializer = TurmaSerializer(turmas, many=True)
+        return Response(serializer.data)
+    except Aluno.DoesNotExist:
+        return Response({'error': 'Aluno não encontrado'}, status=404)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cadastrar_turma(request):
+    serializer = TurmaSerializer(data=request.data)
+    if serializer.is_valid():
+        turma = serializer.save()  # Salva a nova turma no banco
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def visualizar_disciplinas(request):
     disciplinas = Disciplina.objects.all()
