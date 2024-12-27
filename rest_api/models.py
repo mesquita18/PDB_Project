@@ -35,7 +35,15 @@ class Disciplina(models.Model):
 class Aluno(models.Model):
     permission_classes = [IsAuthenticated]
     nome = models.CharField(max_length=200,default='')
-    cpf = models.CharField(max_length=11, validators=[validar_cpf])
+    cpf = models.CharField(
+        max_length=14,  # Formato: "xxxxxxxxx-xx" (exemplo: 202.104.567-01)
+        validators=[
+            RegexValidator(
+                regex=r'^\d{3}.\d{3}.\d{3}-\d{2}$',
+                message="O formato do CPF deve ser 'xxx.xxx.xxx-xx'."
+            )
+        ]
+    )
 
 class Turma(models.Model):
     permission_classes = [IsAuthenticated]
@@ -63,8 +71,8 @@ class Turma(models.Model):
         ]
 
 class AlunoTurma(models.Model):
-    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name="turmas")
-    turma = models.ForeignKey(Turma, on_delete=models.CASCADE, related_name="alunos")  # Relação com a turma
+    aluno = models.ForeignKey('Aluno', on_delete=models.CASCADE, related_name="turmas")
+    turma = models.ForeignKey('Turma', on_delete=models.CASCADE, related_name="alunos")  # Relação com a turma
     class Meta:
         unique_together = ('aluno', 'turma')
 

@@ -2,18 +2,20 @@ from django.contrib import admin
 from django.urls import path,include
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView,TokenVerifyView
 from rest_framework.routers import DefaultRouter
-from rest_api.views import getUser,getUserDetail,AtualizarTurmaView,AlunoTurmaViewSet,AutenticarUser,getDisciplinas,CriarTurmaView,ProtectedView,TokenView,getAlunos,realizar_cadastro,CriarTurmaView
+from rest_api.views import getUser,getUserDetail,AtualizarTurmaView,CadastrarAluno,AlunoTurmaViewSet,AlunoTurmaViewSetByCod,AutenticarUser,getDisciplinas,CriarTurmaView,ProtectedView,TokenView,getAlunos,realizar_cadastro,CriarTurmaView
 import rest_api.views as views
 
 router = DefaultRouter()
 router.register(r'/usuarios',getUser)
 router.register(r'/disciplinas',getDisciplinas)
-router.register(r'/alunos-matriculados',getAlunos)
+router.register(r'/alunos',getAlunos)
+router.register(r'/aluno-turma', AlunoTurmaViewSet, basename='aluno-turma')
 
 urlpatterns = [
     path('',views.realizar_login),
     path('usuarios/cadastro.html',views.realizar_cadastro),
     path('usuarios/home.html',views.home),
+    path('usuarios/cadastro-aluno.html',views.cadastro_aluno,name='cadastro-aluno'),
     path('usuarios/usuarios.html',views.visualizar_usuarios,name='listar_usuarios'),
     path('usuarios/disciplinas.html',views.visualizar_disciplinas,name='listar_disciplinas'),
     path('usuarios/alunos.html',views.visualizar_alunos,name='listar_alunos'),
@@ -22,8 +24,10 @@ urlpatterns = [
     path('api',include(router.urls)),
     path('api/turmas',views.visualizar_turmas),
     path('api/cadastrar-turma',views.cadastrar_turma),
-    path('api/aluno-turmas',AlunoTurmaViewSet.as_view({'get': 'list'})),
-    path('api/aluno-turma/<str:disciplina>',AlunoTurmaViewSet.as_view({'get': 'retrieve'})),
+    path('api/cadastrar-aluno',CadastrarAluno.as_view()),
+    path('api/aluno-turmas',views.visualizar_aluno_turmas),
+    # path('api/aluno-turmas',AlunoTurmaViewSet.as_view({'get': 'list'})),
+    path('api/aluno-turma/<str:disciplina>',AlunoTurmaViewSetByCod.as_view({'get': 'list'})),
     path('api/aluno/<int:aluno_id>/turmas', views.listar_turmas_do_aluno),
     path('disciplinas/<str:cod_disciplina>',views.get_by_cod),
     path('protectview',ProtectedView.as_view()),

@@ -1,0 +1,324 @@
+/* Reset básico de estilo */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo da página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9eff1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container do formulário de login */
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    margin-top: 80px;  /* Para não ficar sobrepondo à navbar */
+}
+
+/* Título do formulário */
+h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Estilo dos campos de entrada */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    background-color: #f5f6f7;
+    transition: border-color 0.3s ease;
+}
+
+/* Efeito de foco nos campos de entrada */
+.input-group input:focus {
+    border-color: #4d84e7;
+    background-color: #fff;
+}
+
+/* Estilo do botão de login */
+.btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #4d84e7;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #3b71c4;
+}
+
+/* Estilo do link de "Cadastre-se" */
+.signup-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.signup-link a {
+    color: #4d84e7;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo do botão de "Criar Conta" */
+.create-account-btn {
+    margin-top: 10px;
+    font-size: 14px;
+    background-color: #42b72a;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.create-account-btn:hover {
+    background-color: #36a420;
+}
+/* Reset básico de estilo */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo da página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9eff1;
+    display: flex;
+    justify-content: center;  /* Centraliza horizontalmente */
+    align-items: center;      /* Centraliza verticalmente */
+    height: 100vh;            /* Garante que a altura ocupe toda a tela */
+    margin: 0;                /* Remove qualquer margem extra */
+}
+
+/* Container do formulário de login */
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Defina a largura máxima do formulário */
+    text-align: center;
+}
+
+/* Título do formulário */
+h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Estilo dos campos de entrada */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    background-color: #f5f6f7;
+    transition: border-color 0.3s ease;
+}
+
+/* Efeito de foco nos campos de entrada */
+.input-group input:focus {
+    border-color: #4d84e7;
+    background-color: #fff;
+}
+
+/* Estilo do botão de login */
+.btn {
+    width: 1
+}
+/* Reset básico de estilo */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo da página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9eff1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Garante que a altura ocupe toda a tela */
+}
+
+/* Navbar */
+.navbar {
+    background-color: #4d84e7; /* Cor de fundo da navbar */
+    width: 100%;
+    padding: 15px 0; /* Espaçamento interno */
+    position: fixed; /* Fixa a navbar no topo da página */
+    top: 0;
+    left: 0;
+    z-index: 10; /* Garante que a navbar fique acima de outros conteúdos */
+}
+
+.navbar-container {
+    text-align: center; /* Centraliza o conteúdo da navbar */
+}
+
+.navbar h1 {
+    color: white; /* Cor do texto */
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Container do formulário de login */
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Defina a largura máxima do formulário */
+    text-align: center;
+    margin-top: 100px; /* Espaço para não sobrepor a navbar */
+}
+
+/* Título do formulário */
+h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Estilo dos campos de entrada */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    background-color: #f5f6f7;
+    transition: border-color 0.3s ease;
+}
+
+/* Efeito de foco nos campos de entrada */
+.input-group input:focus {
+    border-color: #4d84e7;
+    background-color: #fff;
+}
+
+/* Estilo do botão de login */
+.btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #4d84e7;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #3b71c4;
+}
+
+/* Estilo do link de "Cadastre-se" */
+.signup-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.signup-link a {
+    color: #4d84e7;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo do botão de "Criar Conta" */
+.create-account-btn {
+    margin-top: 10px;
+    font-size: 14px;
+    background-color: #42b72a;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.create-account-btn:hover {
+    background-color: #36a420;
+}

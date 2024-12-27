@@ -28,10 +28,24 @@ from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
 from django.db.models import Count
 
 class AlunoTurmaViewSet(ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = AlunoTurma.objects.all()
     serializer_class = AlunoTurmaSerializer
 
+class AlunoTurmaViewSetByCod(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Turma.objects.all()
+    serializer_class = TurmaSerializer
+    lookup_field = 'cod_disciplina'  # Use 'cod_disciplina' como campo de pesquisa
+    def get_queryset(self):
+        # Se necessário, personalize o queryset aqui
+        cod_disciplina = self.kwargs.get(self.lookup_field)  # Obtém o valor do código da disciplina
+        if cod_disciplina:
+            return Turma.objects.filter(disciplina__cod_disciplina=cod_disciplina)
+        return super().get_queryset()
+
 class CriarTurmaView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Turma.objects.all()
     serializer_class = TurmaSerializer
     def post(self, request, *args, **kwargs):
@@ -51,6 +65,7 @@ class CriarTurmaView(viewsets.ModelViewSet):
         return Response(TurmaSerializer(turma).data)
 
 class AtualizarTurmaView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Turma.objects.all()
     serializer_class = TurmaSerializer
     def put(self, request, pk=None):
@@ -71,30 +86,58 @@ class AtualizarTurmaView(viewsets.ModelViewSet):
         # Retorne a resposta com os dados da turma atualizada
         return Response(TurmaSerializer(turma).data)
 
+@permission_classes([IsAuthenticated])
 def realizar_cadastro(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
             return render(request, 'usuarios/cadastro.html', {
-                'error_message': 'Usuário com este username já existe!'
+                'error_message': 'Usuário já existe!'
             })
-
-        if User.objects.filter(email=email).exists():
-            return render(request, 'usuarios/cadastro.html', {
-                'error_message': 'O email já está cadastrado.'
-            })
+        
         user = User.objects.create(
             username=username,
             email=email,
             password=make_password(password)
         )
-        return redirect('home.html')
+        return render(request,'usuarios/home.html')
     return render(request,'usuarios/cadastro.html',{'erro_message':'Bad request'})
 
+class CadastrarAluno(APIView):
+    @permission_classes([IsAuthenticated])
+    def cadastrar_aluno(self,request):
+        if request.method == 'POST':
+            nome = request.data.get('nome')
+            cpf = request.data.get('cpf')
+            if Aluno.objects.filter(cpf=cpf).exists():
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+            aluno = Aluno.objects.create(
+                nome=nome,
+                cpf=cpf,
+            )
+            return Response(AlunoSerializer(aluno),status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAuthenticated])
 def home(request):
     return render(request, 'usuarios/home.html')
+
+@permission_classes([IsAuthenticated])
+def cadastro_aluno(request):
+    if request.method == 'GET':
+        return render(request, 'usuarios/cadastro-aluno.html')
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        cpf = request.POST.get('cpf')
+        if Aluno.objects.filter(cpf=cpf).exists():
+            return render(request,'usuarios/cadastro-aluno.html',{'erro':'Aluno já matriculado!'})
+        aluno = Aluno.objects.create(
+            nome=nome,
+            cpf=cpf,
+        )
+    return render(request, 'usuarios/cadastro-aluno.html', {"message": "Aluno cadastrado com sucesso!"})
 
 @permission_classes([IsAuthenticated])
 def realizar_login(request):
@@ -136,6 +179,13 @@ def visualizar_usuarios(request):
 def visualizar_turmas(request):
     turmas = Turma.objects.all()
     serializer = TurmaSerializer(turmas,many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def visualizar_aluno_turmas(request):
+    aluno_turmas = AlunoTurma.objects.all()
+    serializer = AlunoTurmaSerializer(aluno_turmas,many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
