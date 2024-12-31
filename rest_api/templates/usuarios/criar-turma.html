@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Nova Turma</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('/static/css/images/image_scholar.webp') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            display: flex; /* Ativa o Flexbox */
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+            min-height: 100vh; /* Garante que ocupe a altura total da tela */
+            padding: 20px;
+        }
+
+        .form-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px 30px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-card h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group small {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .btn-submit {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .form-card button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-card button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Cadastrar Nova Turma</h1>
+            <form method="POST" action="{% url 'criar_turma' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="semestre">Semestre (Ex.: 2024-02):</label>
+                    <input type="text" id="semestre" name="semestre" pattern="\d{4}\-\d{2}" placeholder="Digite o semestre" required>
+                    <small>Formato: xxxx-xx (Ex.: 2024-02)</small>
+                </div>
+                <div class="form-group">
+                    <label for="disciplina_id">Código da Disciplina:</label>
+                    <input type="text" id="cod_disciplina" name="cod_disciplina" placeholder="Digite o código da disciplina" required>
+                </div>
+                <div class="form-group">
+                    <label for="alunos">IDs dos Alunos (separados por vírgula):</label>
+                    <select id="alunos" name="alunos" multiple>
+                        {% for aluno in alunos %}
+                            <option value="{{ aluno.id }}">{{ aluno.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Cadastrar Turma</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

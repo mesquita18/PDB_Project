@@ -11,6 +11,15 @@ body {
     background-color: #e9eff1;
     display: flex;
     flex-direction: column;
+    background-image: url('images/image_scholar_02.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh; /* Ocupa 100% da altura da tela */
+    margin: 0;
+    display: flex; /* Habilita o Flexbox */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
 }
 
 /* Container do formulário de login */
@@ -31,6 +40,14 @@ h2 {
     color: #333;
     margin-bottom: 20px;
     font-weight: 600;
+}
+
+h1 {
+    font-size: 36px;
+    text-align: center;
+    background: linear-gradient(90deg, #4facfe, #00f2fe); /* Gradiente azul */
+    font-family: 'Verdana', sans-serif;
+    margin-bottom: 20px;
 }
 
 /* Estilo dos campos de entrada */

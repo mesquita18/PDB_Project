@@ -1,0 +1,69 @@
+/* Estiliza o body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    height: 100vh;
+}
+
+/* Estiliza a barra lateral */
+.sidebar {
+    width: 250px;
+    background-color: #f8f9fa; /* Fundo claro */
+    border-right: 1px solid #ddd; /* Linha divisória à direita */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+    border-bottom: 1px solid #e0e0e0; /* Linha separadora entre links */
+    padding-bottom: 10px;
+}
+
+.sidebar ul li a {
+    color: #007bff; /* Azul para links */
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre ícone e texto */
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #007bff; /* Fundo azul ao passar o mouse */
+    color: white; /* Texto branco ao passar o mouse */
+}
+
+/* Estiliza os ícones (se adicionados) */
+.sidebar ul li a i {
+    font-size: 18px; /* Tamanho do ícone */
+}
+
+/* Estiliza o conteúdo principal */
+.content {
+    flex: 1;
+    padding: 20px;
+    background-image: url('images/image_scholar.webp'); /* Caminho da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #333; /* Contraste do texto com o fundo */
+}

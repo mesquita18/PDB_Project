@@ -125,6 +125,29 @@ def home(request):
     return render(request, 'usuarios/home.html')
 
 @permission_classes([IsAuthenticated])
+def criar_turma(request):
+    if request.method == 'GET':
+        alunos = Aluno.objects.all()
+        return render(request,'usuarios/criar-turma.html',{'alunos': alunos})
+    if request.method == 'POST':
+        semestre = request.POST.get('semestre')
+        cod_disciplina = request.POST.get('cod_disciplina')
+        alunos_ids = request.POST.getlist('alunos')
+        try:
+            disciplina = Disciplina.objects.get(cod_disciplina=cod_disciplina)
+        except Disciplina.DoesNotExist:
+            return HttpResponse("Disciplina não encontrada.", status=404)
+        if Turma.objects.filter(disciplina=disciplina, semestre=semestre).exists():
+            return HttpResponse("Já existe uma turma para essa disciplina no semestre informado.", status=400)
+        nova_turma = Turma.objects.create(disciplina=disciplina, semestre=semestre)
+        alunos = Aluno.objects.filter(id__in=alunos_ids)
+        if not alunos.exists():
+            return HttpResponse("Nenhum aluno válido foi selecionado.", status=400)
+        for aluno in alunos:
+            AlunoTurma.objects.create(aluno=aluno, turma=nova_turma)
+        return render(request,'usuarios/criar-turma.html')
+
+@permission_classes([IsAuthenticated])
 def cadastro_aluno(request):
     if request.method == 'GET':
         return render(request, 'usuarios/cadastro-aluno.html')
@@ -167,6 +190,12 @@ def visualizar_usuarios(request):
 def detalhar_disciplina(request,cod_disciplina):
     disciplina = get_object_or_404(Disciplina, cod_disciplina=cod_disciplina)
     return render(request, 'usuarios/disciplina.html', {'disciplina': disciplina})
+
+@permission_classes([IsAuthenticated])
+def detalhar_turma(request,id_turma):
+    turma = get_object_or_404(Turma, id=id_turma)
+    alunos = AlunoTurma.objects.filter(turma=turma)
+    return render(request, 'usuarios/turma.html', {'turma': turma, 'alunos': alunos})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -216,6 +245,14 @@ def visualizar_disciplinas(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'usuarios/disciplinas.html', {'page_obj': page_obj})
+
+@permission_classes([IsAuthenticated])
+def visualizar_turmas(request):
+    turmas = Turma.objects.all()
+    paginator = Paginator(turmas, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'usuarios/turmas.html', {'page_obj': page_obj})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

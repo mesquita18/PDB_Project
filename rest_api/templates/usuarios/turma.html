@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da turma</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav style="background-color: aquamarine !important;" class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1"></span>
+        </div>
+    </nav>
+    <div style="text-align: center;" class="container">
+        <p><strong>Disciplina ministrada:</strong> {{ turma.disciplina.nome_disciplina }}</p>
+        <p><strong>Semestre:</strong> {{ turma.semestre }}</p>
+        <p><strong>Período:</strong> {{turma.disciplina.periodo}}° período</p>
+        <h2>Alunos Matriculados:</h2>
+        {% if alunos %}
+        <ul style="list-style-type: none; padding: 0;">
+            {% for aluno in alunos %}
+                <li style="text-align: left;">- {{ aluno.aluno.nome }} </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Nenhum aluno matriculado nesta turma.</p>
+        {% endif %}
+        <p><a href="http://127.0.0.1:8000/usuarios/turmas.html">Voltar para a lista das turmas</a></p>
+    </div>
+</body>
+</html>
