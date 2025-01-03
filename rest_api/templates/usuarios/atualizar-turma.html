@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style_3.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Atualizar Turma</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'css/images/image_scholar.webp' %}");
+            background-size: cover; /* Faz com que a imagem cubra toda a tela */
+            background-position: center; /* Centraliza a imagem */
+            background-repeat: no-repeat; /* Evita a repetição da imagem */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #alunos-container {
+            display: flex;
+            flex-direction: column; /* Alinha os itens em coluna */
+            justify-content: center; /* Centraliza verticalmente */
+            align-items: flex-start; /* Alinha os itens à esquerda */
+            gap: 15px; /* Espaçamento entre as linhas */
+            width: 100%; /* Define a largura como 80% do contêiner pai */
+            max-width: 1600px; /* Define uma largura máxima */
+            margin: 0 auto; /* Centraliza o contêiner na tela */
+        }
+
+        #alunos-container div {
+            display: flex;
+            align-items: center; /* Alinha o checkbox e o texto */
+            width: 100%; /* Garante que cada linha ocupe toda a largura */
+        }
+
+        #alunos-container label {
+            flex-grow: 1; /* Faz o texto ocupar o espaço restante */
+            text-align: left; /* Alinha o texto à esquerda */
+            font-size: 16px;
+            margin-left: 10px; /* Espaço entre o checkbox e o texto */
+            cursor: pointer; /* Permite clicar no texto */
+        }
+
+        input[type="checkbox"] {
+            margin: 0; /* Remove margens padrão */
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Atualizar Turma</h1>
+        <form id="validate-form">
+            <label for="cod_disciplina">Código da Disciplina:</label>
+            <input type="text" id="cod_disciplina" name="cod_disciplina" placeholder="Digite o código da disciplina" required>
+            <label for="semestre">Semestre:</label>
+            <input type="text" id="semestre" name="semestre" placeholder="Digite o semestre (ex. 2024-02)" required>
+            <button type="submit">Validar Turma</button>
+        </form>
+        <form id="update-form" class="hidden" method="post" action="{% url 'atualizar_turma' %}">
+            {% csrf_token %}
+            <input type="hidden" name="cod_disciplina" value="{{ turma.disciplina.cod_disciplina }}">
+            <label for="alunos">Selecione os alunos:</label>
+            <div id="alunos-container">
+                {% for aluno in alunos %}
+                    <div>
+                        <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}">
+                        <label for="aluno_{{ aluno.id }}">{{ aluno.nome }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit">Atualizar Turma</button>
+        </form>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <script>
+        // Simulação de validação
+        const validateForm = document.getElementById("validate-form");
+        const updateForm = document.getElementById("update-form");
+
+        validateForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Simule a validação do backend (aqui sempre é válido)
+            const codDisciplina = document.getElementById("cod_disciplina").value;
+            const semestre = document.getElementById("semestre").value;
+
+            if (codDisciplina && semestre) {
+                alert("Turma válida! Informe os alunos.");
+                validateForm.classList.add("hidden");
+                updateForm.classList.remove("hidden");
+            } else {
+                alert("Por favor, preencha os campos corretamente.");
+            }
+        });
+    </script>
+</body>
+</html>

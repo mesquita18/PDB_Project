@@ -26,6 +26,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
 from django.db.models import Count
+from django.contrib import messages
 
 class AlunoTurmaViewSet(ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -181,10 +182,37 @@ def realizar_login(request):
             'erro': 'Bad Request!'
         })
 
-@login_required  # Exige que o usuário esteja logado para acessar
+@login_required
+def atualizar_turma(request):
+    if request.method == "GET":
+        alunos = Aluno.objects.all()
+        return render(request, 'usuarios/atualizar-turma.html', {'alunos': alunos})
+    if request.method == "POST":
+        turma_id = request.POST.get("cod_disciplina")
+        semestre = request.POST.get("semestre")
+        alunos_selecionados = request.POST.getlist("alunos")
+        disciplina = Disciplina.objects.get(cod_disciplina=turma_id)
+        if Turma.objects.filter(disciplina=disciplina, semestre=semestre).exists():
+            turma = Turma.objects.get(disciplina=disciplina, semestre=semestre)
+            alunos = Aluno.objects.filter(id__in=alunos_selecionados)
+            if not alunos.exists():
+                return HttpResponse("Nenhum aluno válido foi selecionado.", status=400)
+            for aluno in alunos:
+                AlunoTurma.objects.update_or_create(
+                    aluno=aluno,
+                    turma=turma,
+                )
+            messages.success(request, "Turma atualizada com sucesso!")
+            return render(request, 'usuarios/home.html')
+        return HttpResponse("Turma não encontrada.", status=404)
+
+@login_required
 def visualizar_usuarios(request):
-    usuarios = User.objects.all()  # Obtém todos os usuários cadastrados
-    return render(request, 'usuarios/usuarios.html', {'usuarios': usuarios})
+    usuarios = User.objects.all()
+    paginator = Paginator(usuarios, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'usuarios/usuarios.html', {'page_obj': page_obj})
 
 @permission_classes([IsAuthenticated])
 def detalhar_disciplina(request,cod_disciplina):
@@ -197,11 +225,13 @@ def detalhar_turma(request,id_turma):
     alunos = AlunoTurma.objects.filter(turma=turma)
     return render(request, 'usuarios/turma.html', {'turma': turma, 'alunos': alunos})
 
+'''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def visualizar_usuarios(request):
     usuarios = User.objects.all()
     return render(request, 'usuarios/usuarios.html', {'usuarios':usuarios})
+'''
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

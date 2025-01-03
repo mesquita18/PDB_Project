@@ -22,7 +22,7 @@ urlpatterns = [
     path('usuarios/turmas.html',views.visualizar_turmas,name='listar_turmas'),
     path('usuarios/turma.html/<int:id_turma>',views.detalhar_turma,name='detalhar_aluno_in_turma'),
     path('usuarios/criar-turma.html',views.criar_turma,name='criar_turma'),
-    # path('usuarios/atualizar-turma.html',views.atualizar_turma,name='atualizar_turma'),
+    path('usuarios/atualizar-turma.html',views.atualizar_turma,name='atualizar_turma'),
     path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina'),
     path('admin/', admin.site.urls),
     path('api',include(router.urls)),

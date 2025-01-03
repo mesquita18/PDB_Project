@@ -119,7 +119,7 @@
                     <input type="text" id="cod_disciplina" name="cod_disciplina" placeholder="Digite o código da disciplina" required>
                 </div>
                 <div class="form-group">
-                    <label for="alunos">IDs dos Alunos (separados por vírgula):</label>
+                    <label for="alunos">IDs dos Alunos (selecione os alunos da turma):</label>
                     <select id="alunos" name="alunos" multiple>
                         {% for aluno in alunos %}
                             <option value="{{ aluno.id }}">{{ aluno.nome }}</option>
