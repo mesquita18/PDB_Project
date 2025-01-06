@@ -6,21 +6,21 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         .link-atualizar-turma {
-            color: #007bff; /* Cor azul padrão */
-            text-decoration: none; /* Remove o sublinhado */
-            font-weight: bold; /* Deixa o texto mais forte */
-            transition: color 0.3s ease; /* Suaviza a troca de cor */
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
         }
 
         .link-atualizar-turma:hover {
-            color: #0056b3; /* Cor mais escura ao passar o mouse */
-            text-decoration: underline; /* Adiciona sublinhado no hover */
+            color: #0056b3;
+            text-decoration: underline;
         }
 
         h1 {
             font-size: 28px;
             text-align: center;
-            background: linear-gradient(90deg, #4facfe, #00f2fe); /* Gradiente azul */
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
             font-family: 'Verdana', sans-serif;
             margin-bottom: 24px;
         }
@@ -44,7 +44,10 @@
             <li><a href="http://127.0.0.1:8000"><i class="fas fa-sign-out-alt"></i> Voltar para a tela de login</a></li>
         </ul>
     </nav>
-    <div class="content">
+    <div class="content" style="text-align: center; margin-top: 20px;">
+        {% if message %}
+        <br><br><p class="error-message" style="color: red;">{{ message }}</p>
+        {% endif %}
     </div>
 </body>
 </html>

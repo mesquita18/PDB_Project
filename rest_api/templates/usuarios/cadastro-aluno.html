@@ -13,20 +13,19 @@
         h1 {
             font-size: 28px;
             text-align: center;
-            background: linear-gradient(90deg, #4facfe, #00f2fe); /* Gradiente azul */
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
             font-family: 'Verdana', sans-serif;
             margin-bottom: 24px;
         }
     </style>
     <script>
         $(document).ready(function() {
-            // Função para formatar o CPF enquanto o usuário digita
             $('#cpf').on('input', function() {
-                var cpf = $(this).val().replace(/\D/g, ''); // Remove qualquer caractere não numérico
+                var cpf = $(this).val().replace(/\D/g, '');
                 if (cpf.length <= 11) {
-                    cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); // Aplica a formatação
+                    cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
                 }
-                $(this).val(cpf); // Atualiza o valor do campo de entrada
+                $(this).val(cpf);
             });
         });
     </script>

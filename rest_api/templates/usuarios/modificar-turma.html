@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style_3.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Atualizar Turma</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'css/images/image_scholar.webp' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #alunos-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #alunos-container div {
+            flex: 1 1 calc(33.33% - 10px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        #alunos-container label {
+            flex-grow: 1;
+            text-align: left;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <form method="post" action="{% url 'modificar_turma' cod_disciplina semestre %}">
+        {% csrf_token %}
+        <input type="hidden" name="cod_disciplina" value="{{ cod_disciplina }}">
+        <input type="hidden" name="semestre" value="{{ semestre }}">
+        <label for="alunos">Selecione os alunos:</label>
+        <div id="alunos-container">
+            {% for aluno in alunos %}
+                <div>
+                    <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}" {% if aluno.id in alunos_na_turma %}checked{% endif %}>
+                    <label for="aluno_{{ aluno.id }}">{{ aluno.nome }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="pagination-controls" style="text-align: center; margin-top: 20px;">
+            <button id="prev-page" disabled>Anterior</button>
+            <span id="current-page">1</span> / <span id="total-pages">1</span>
+            <button id="next-page">Próximo</button>
+        </div>
+        <button type="submit">Atualizar Turma</button>
+    </form>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const alunos = Array.from(document.querySelectorAll('#alunos-container > div'));
+            const itemsPerPage = 9;
+            let currentPage = 1;
+            function renderPage(page) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                alunos.forEach((aluno, index) => {
+                    aluno.style.display = index >= start && index < end ? 'flex' : 'none';
+                });
+                document.getElementById('current-page').textContent = page;
+                document.getElementById('total-pages').textContent = Math.ceil(alunos.length / itemsPerPage);
+                document.getElementById('prev-page').disabled = page === 1;
+                document.getElementById('next-page').disabled = page === Math.ceil(alunos.length / itemsPerPage);
+            }
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (currentPage < Math.ceil(alunos.length / itemsPerPage)) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
+            });
+            renderPage(currentPage);
+        });
+    </script>
+</body>
+</html>
