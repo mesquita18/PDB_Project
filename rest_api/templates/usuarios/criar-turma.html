@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Nova Turma</title>
@@ -121,9 +122,14 @@
                     <small>Formato: xxxx-xx (Ex.: 2024-02)</small>
                 </div>
                 <div class="form-group">
-                    <label for="disciplina_id">Código da Disciplina:</label>
-                    <input type="text" id="cod_disciplina" name="cod_disciplina" placeholder="Digite o código da disciplina" required>
-                </div>
+                    <label for="cod_disciplina">Código da Disciplina:</label>
+                    <select id="cod_disciplina" name="cod_disciplina" required style="padding: 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+                        <option value="" disabled selected>Selecione um código de disciplina</option>
+                        {% for disciplina in disciplinas %}
+                        <option value="{{ disciplina.cod_disciplina }}">{{ disciplina.cod_disciplina }} - {{ disciplina.nome_disciplina }}</option>
+                        {% endfor %}
+                    </select>
+                </div>                
                 <div class="form-group">
                     <label for="alunos">IDs dos Alunos (selecione os alunos da turma):</label>
                     <select id="alunos" name="alunos" multiple="multiple" class="form-select">
@@ -133,9 +139,12 @@
                     </select>
                 </div>
                 <button type="submit" class="btn-submit">Cadastrar Turma</button><br><br><br>
-                <li><a href="http://127.0.0.1:8000/usuarios/home.html"><i class="fas fa-sign-out-alt"></i> Voltar para a tela inicial</a></li>
+                <li><a href="http://127.0.0.1:8000/usuarios/turmas.html"><i class="fas fa-sign-out-alt"></i> Voltar para as turmas</a></li>
+                {% if error_message %}
+                <br><br><p class="error-message" style="color: red;">{{ error_message }}</p>
+                {% endif %}
                 {% if message %}
-                <br><br><p class="error-message" style="color: red;">{{ message }}</p>
+                <br><br><p class="error-message" style="color: rgba(17, 255, 0, 0.801);">{{ message }}</p>
                 {% endif %}
             </form>
         </div>

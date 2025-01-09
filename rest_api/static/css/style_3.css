@@ -1,4 +1,7 @@
-/* Estiliza o body */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -6,7 +9,11 @@ body {
     height: 100vh;
 }
 
-/* Estiliza a barra lateral */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 .sidebar {
     width: 250px;
     background-color: #f8f9fa; /* Fundo claro */
@@ -52,18 +59,17 @@ body {
     color: white; /* Texto branco ao passar o mouse */
 }
 
-/* Estiliza os ícones (se adicionados) */
 .sidebar ul li a i {
     font-size: 18px; /* Tamanho do ícone */
 }
 
-/* Estiliza o conteúdo principal */
 .content {
     flex: 1;
     padding: 20px;
-    background-image: url('images/image_scholar.webp'); /* Caminho da imagem */
+    background-image: url("{% static 'css/images/image_scholar.webp' %}");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    color: #333; /* Contraste do texto com o fundo */
+    color: #333;
+    min-height: 100vh; /* Garante altura mínima */
 }

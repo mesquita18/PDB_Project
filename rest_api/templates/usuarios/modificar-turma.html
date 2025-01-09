@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -22,7 +23,25 @@
             height: 100vh;
             margin: 0;
         }
-
+        ul {
+            padding: 0;
+            text-align: center;
+        }
+        li {
+            list-style-type: none;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
         .form-container {
             background: rgba(255, 255, 255, 0.95);
             padding: 20px 30px;
@@ -104,6 +123,56 @@
             cursor: pointer;
         }
 
+        .center-link {
+            display: flex;               /* Usa flexbox */
+            justify-content: center;     /* Centraliza horizontalmente */
+            align-items: center;         /* Alinha no centro verticalmente */
+            margin-top: 20px;            /* Espaçamento acima do link */
+        }
+
+        .center-link li {
+            list-style-type: none;       /* Remove os marcadores de lista */
+            text-align: center;          /* Centraliza o texto do link */
+        }
+        
+        .center-link label {
+            display: inline-block;           /* Torna a label um bloco inline, assim como um link */
+            padding: 10px 20px;              /* Espaçamento interno do link */
+            background-color: #007bff;       /* Cor de fundo azul (como o link) */
+            color: white;                    /* Cor do texto */
+            text-decoration: none;           /* Remove qualquer sublinhado */
+            border-radius: 4px;              /* Borda arredondada */
+            font-size: 16px;                 /* Tamanho da fonte */
+            transition: background-color 0.3s; /* Transição suave para o hover */
+        }
+
+        .center-link label:hover {
+            background-color: #0056b3;       /* Cor de fundo azul escuro ao passar o mouse */
+            cursor: pointer;                 /* Altera o cursor para pointer (indicando que é clicável) */
+        }
+
+        .center-button-container {
+            display: flex;                  /* Habilita o Flexbox */
+            justify-content: center;        /* Centraliza o botão horizontalmente */
+            align-items: center;            /* Centraliza o botão verticalmente, caso necessário */
+            height: 100%;                    /* Garante que o container ocupe toda a altura disponível */
+            margin-top: 20px;                /* Espaçamento superior, se necessário */
+        }
+
+        .center-button-container button {
+            padding: 10px 20px;              /* Espaçamento interno do botão */
+            background-color: #007bff;       /* Cor de fundo */
+            color: white;                    /* Cor do texto */
+            border: none;                    /* Remove borda */
+            border-radius: 5px;              /* Borda arredondada */
+            font-size: 16px;                 /* Tamanho da fonte */
+            cursor: pointer;                 /* Altera o cursor para pointer */
+        }
+
+        .center-button-container button:hover {
+            background-color: #0056b3;       /* Cor de fundo ao passar o mouse */
+        }
+
     </style>
 </head>
 <body>
@@ -111,21 +180,32 @@
         {% csrf_token %}
         <input type="hidden" name="cod_disciplina" value="{{ cod_disciplina }}">
         <input type="hidden" name="semestre" value="{{ semestre }}">
-        <label for="alunos">Selecione os alunos:</label>
-        <div id="alunos-container">
-            {% for aluno in alunos %}
+        <div class="center-link">
+            <label for="alunos">Selecione os alunos</label>
+        </div>
+        <div id="alunos-container" class="center-button-container">
+            {% for aluno in alunos_cadastrados %}
                 <div>
-                    <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}" {% if aluno.id in alunos_na_turma %}checked{% endif %}>
+                    <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}" checked >
                     <label for="aluno_{{ aluno.id }}">{{ aluno.nome }}</label>
                 </div>
             {% endfor %}
-        </div>
+            {% for aluno in alunos_nao_cadastrados %}
+                <div>
+                    <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}">
+                    <label for="aluno_{{ aluno.id }}">{{ aluno.nome }}</label>
+                </div>
+            {% endfor %}
+            <button type="submit">Atualizar Turma</button>
+        </div>    
         <div id="pagination-controls" style="text-align: center; margin-top: 20px;">
-            <button id="prev-page" disabled>Anterior</button>
+            <button id="prev-page" type="button" disabled>Anterior</button>
             <span id="current-page">1</span> / <span id="total-pages">1</span>
-            <button id="next-page">Próximo</button>
+            <button id="next-page" type="button">Próximo</button>
         </div>
-        <button type="submit">Atualizar Turma</button>
+        <div class="center-link">
+            <li><a href="http://127.0.0.1:8000/usuarios/home.html"><i class="fas fa-sign-out-alt"></i> Voltar para a tela inicial</a></li>
+        </div>
     </form>
     {% if messages %}
         <ul>

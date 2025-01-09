@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style_3.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>Atualizar Turma</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Cadastrar Disciplina</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,38 +106,40 @@
     </style>
 </head>
 <body>
-    <form method="post" action="{% url 'atualizar_turma' %}">
+    <form method="post" action="{% url 'criar_disciplina' %}">
         {% csrf_token %}
         <div style="text-align: center;" class="form-container">
-            <h1>Atualizar Turma</h1>
-            {% csrf_token %}
-                <label for="cod_disciplina">Código da Disciplina:</label>
-                <input class="form-control-sm" type="text" name="cod_disciplina" placeholder="Digite o código da disciplina" required>
-                <label for="semestre">Semestre:</label>
-                <input class="form-control-sm" type="text" name="semestre" placeholder="Digite o semestre (ex. 2024-02)" required>
-                <button class="validate-form">Validar Turma</button><br>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-                {% if erro %}
-                <br><p class="error-message" style="color: red;">{{ erro }}</p>
-                {% endif %}
+            <h1>Cadastrar Disciplina</h1>
+            <label for="cod_disciplina">Código da Disciplina:</label>
+            <input class="form-control-sm" type="text" name="cod_disciplina" placeholder="Digite o código da disciplina" required>
+            <label for="cod_disciplina">Nome da Disciplina:</label>
+            <input class="form-control-sm" type="text" name="nome_disciplina" placeholder="Digite o nome da disciplina" required>
+            <label for="semestre">Carga Horária:</label>
+            <input class="form-control-sm" type="text" name="carga_horaria" placeholder="Digite sua carga horária (ex. 60h)" required>
+            <label for="periodo">Período:</label>
+            <select class="form-control-sm" name="periodo" required>
+                <option value="" disabled selected>Selecione o período</option>
+                <option value="1°">1°</option>
+                <option value="2°">2°</option>
+                <option value="3°">3°</option>
+                <option value="4°">4°</option>
+                <option value="5°">5°</option>
+                <option value="6°">6°</option>
+                <option value="7°">7°</option>
+                <option value="8°">8°</option>
+                <option value="9°">9°</option>
+                <option value="10°">10°</option>
+            </select>
+            <button class="validate-form">Cadastrar Disciplina</button><br><br>
+            <li><a href="http://127.0.0.1:8000/usuarios/disciplinas.html"><i class="fas fa-sign-out-alt"></i> Voltar para as disciplinas</a></li>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+            {% if erro %}
+            <br><p class="error-message" style="color: red;">{{ erro }}</p>
+            {% endif %}
+            {% if message %}
+            <br><br><p class="error-message" style="color: rgba(21, 242, 5, 0.619);">{{ message }}</p>
+            {% endif %}
         </div>
-        <script>
-            const validateForm = document.getElementById("validate-form");
-            const updateForm = document.getElementById("update-form");
-            validateForm.addEventListener("submit", function(event) {
-                event.preventDefault();
-                const codDisciplina = document.getElementById("cod_disciplina").value;
-                const semestre = document.getElementById("semestre").value;
-                if (codDisciplina && semestre) {
-                    alert("Turma válida! Informe os alunos.");
-                    window.location.href = "/usuarios/modificar-turma.html";
-                    validateForm.classList.add("hidden");
-                    updateForm.classList.remove("hidden");
-                } else {
-                    alert("Por favor, preencha os campos corretamente.");
-                }
-            });
-        </script>
     </form>
 </body>
 </html>

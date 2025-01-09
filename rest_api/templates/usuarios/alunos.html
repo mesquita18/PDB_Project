@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listagem dos alunos</title>
@@ -57,13 +58,40 @@
             color: #888;
             padding: 15px;
         }
+        
+        .green-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745; /* Cor verde */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .green-button:hover {
+            background-color: #218838; /* Cor verde escuro ao passar o mouse */
+        }
+
     </style>
 </head>
 <body>
-    <form action="% url 'listar_alunos' %" method="get">
+    <form action="{% url 'listar_alunos' %}" method="get">
         <div class="container">
+            <a href="{% url 'cadastro_aluno' %}">
+                <button type="button" class="green-button">Matricular um aluno</button>
+            </a>
             <h1 class="text-primary">Alunos Cadastradas</h1>
-            <table border="1" cellpadding="10" class="table table-bordered table-striped">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <input type="text" name="search" placeholder="Digite o nome do aluno..." value="{{ search_query }}"style="padding: 8px; width: 50%; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="submit" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px;">Buscar</button>
+            </div>
+            <br><table border="1" cellpadding="10" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>nome</th>
