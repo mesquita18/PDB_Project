@@ -4,12 +4,17 @@
     <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <title>Listagem das turmas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f4f4f9;
+            background-image: url('/static/css/images/image_scholar.webp');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: #333;
         }
 
@@ -94,6 +99,108 @@
         .green-button:hover {
             background-color: #218838;
         }
+
+        .center-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .center-link a:hover {
+            background-color: rgba(255, 255, 255, 1);
+            color: #007bff;
+            border-color: #007bff;
+        }
+
+        .center-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .center-link li {
+            list-style-type: none;
+            text-align: center;
+        }
+
+        .delete-btn {
+            display: inline-block;
+            padding: 5px 5px;
+            background-color: red;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: center;
+            width: 60px;
+            height: 10px;
+            margin-left: 5px;
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+
+        th:last-child, td:last-child {
+            width: 150px;
+            text-align: center;
+        }
+
+        td:last-child {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        span {
+            background-color: yellow;
+            font-weight: bold;
+            padding: 2px;
+            border-radius: 8px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #0056b3;
+            color: #e6e6e6;
+        }
+
+        .pagination span {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #f1f1f1;
+            color: #333;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -107,7 +214,6 @@
                 <input type="text" name="search" placeholder="Digite o nome da disciplina da turma..." value="{{ search_query }}" style="padding: 8px; width: 50%; border: 1px solid #ccc; border-radius: 4px;">
                 <button type="submit" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px;">Buscar</button>
             </div>
-            <br>
             <table border="1" cellpadding="10" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -121,12 +227,13 @@
                     <tr>
                         <td>
                             <a href="{% url 'detalhar_aluno_in_turma' turma.id %}">
-                                {{ turma.disciplina.nome_disciplina }}
+                                {{ turma.disciplina.nome_disciplina |safe}}
                             </a>
                         </td>
                         <td>{{ turma.semestre }}</td>
                         <td>
                             <a href="{% url 'modificar_turma' turma.disciplina.cod_disciplina turma.semestre %}" class="edit-btn">Editar</a>
+                            <a href="{% url 'excluir_turma' turma.id %}" class="delete-btn" onclick="return confirm('Tem certeza de que deseja excluir esta turma?')">Excluir</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -146,8 +253,9 @@
                     <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
                 {% endif %}
             </div>
-            <br><br>
-            <p><a href="http://127.0.0.1:8000/usuarios/home.html">Voltar para página inicial</a></p>
+            <div class="center-link">
+                <li><a href="http://127.0.0.1:8000/usuarios/home.html"><i class="fas fa-sign-out-alt"></i> Voltar para a tela inicial</a></li>
+            </div>
         </div>
     </form>
 </body>

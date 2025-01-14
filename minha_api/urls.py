@@ -1,7 +1,9 @@
 from django.urls import path,include
 import rest_api.views as views
+from django.contrib import admin
 
 urlpatterns = [
+    path('admin', admin.site.urls),
     path('',views.realizar_login),
     path('usuarios/cadastro.html',views.realizar_cadastro,name='cadastro_usuario'),
     path('usuarios/home.html',views.home),
@@ -14,5 +16,6 @@ urlpatterns = [
     path('usuarios/turma.html/<int:id_turma>',views.detalhar_turma,name='detalhar_aluno_in_turma'),
     path('usuarios/criar-turma.html',views.criar_turma,name='criar_turma'),
     path('usuarios/modificar-turma.html/<str:cod_disciplina>/<str:semestre>',views.modificar_turma,name='modificar_turma'),
-    path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina')
+    path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina'),
+    path('turmas/excluir-turma/<int:id>/', views.excluir_turma, name='excluir_turma')
 ]

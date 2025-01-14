@@ -132,6 +132,34 @@
                 transform: translate(-50%, -50%) scale(1);
             }
         }
+        .confirmation-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            width: 25%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 128, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeOut 3s forwards;
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>

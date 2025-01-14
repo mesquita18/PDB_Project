@@ -28,6 +28,7 @@ from django.http import HttpResponse
 from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
 from django.db.models import Count
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 import re
 
 @login_required
@@ -48,6 +49,13 @@ def realizar_cadastro(request):
             email=email if email else None,
         )
         return render(request,'usuarios/cadastro.html',{'message':'Usuário cadastrado com sucesso!'})
+
+@login_required
+def excluir_turma(request, id):
+    turma = get_object_or_404(Turma, id=id)
+    turma.delete()
+    messages.success(request, f"A turma foi excluída com sucesso!")
+    return redirect('listar_turmas')
 
 @login_required
 def home(request):
@@ -174,12 +182,18 @@ def cadastrar_disciplina(request):
 
 @login_required
 def visualizar_usuarios(request):
-    search_query = request.GET.get('search', '')
+    search_query = request.GET.get('search', '').strip()
     usuarios = User.objects.all()
     if search_query:
-        usuarios = usuarios.filter(
-            Q(username__icontains=search_query)
-        )
+        usuarios = usuarios.filter(Q(username__icontains=search_query))
+        for usuario in usuarios:
+            pattern = re.compile(re.escape(search_query), re.IGNORECASE)
+            usuario.username = mark_safe(
+                pattern.sub(
+                    lambda match: f'<span style="background-color: yellow; font-weight: bold;">{match.group(0)}</span>',
+                    usuario.username
+                )
+            )
     paginator = Paginator(usuarios, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -198,23 +212,46 @@ def detalhar_turma(request,id_turma):
 
 @login_required
 def visualizar_disciplinas(request):
-    search_query = request.GET.get('search', '')
+    search_query = request.GET.get('search', '').strip()
     disciplinas = Disciplina.objects.all().order_by('periodo')
+
     if search_query:
         disciplinas = disciplinas.filter(
             Q(nome_disciplina__icontains=search_query)
         )
+    
+        for disciplina in disciplinas:
+            pattern = re.compile(re.escape(search_query), re.IGNORECASE)
+            disciplina.nome_disciplina = mark_safe(
+                pattern.sub(
+                    lambda match: f'<span style="background-color: yellow; font-weight: bold;">{match.group(0)}</span>',
+                    disciplina.nome_disciplina
+                )
+            )
+
     paginator = Paginator(disciplinas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'usuarios/disciplinas.html', {'page_obj': page_obj,'search_query': search_query})
+
+    return render(request, 'usuarios/disciplinas.html', {
+        'page_obj': page_obj,
+        'search_query': search_query
+    })
 
 @login_required
 def visualizar_turmas(request):
-    search_query = request.GET.get('search', '')
+    search_query = request.GET.get('search', '').strip()
     turmas = Turma.objects.all().order_by('semestre')
     if search_query:
         turmas = turmas.filter(Q(disciplina__nome_disciplina__icontains=search_query))
+        for turma in turmas:
+            pattern = re.compile(re.escape(search_query), re.IGNORECASE)
+            turma.disciplina.nome_disciplina = mark_safe(
+                pattern.sub(
+                    lambda match: f'<span style="background-color: yellow; font-weight: bold;">{match.group(0)}</span>',
+                    turma.disciplina.nome_disciplina
+                )
+            )
     paginator = Paginator(turmas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -222,10 +259,18 @@ def visualizar_turmas(request):
 
 @login_required
 def visualizar_alunos(request):
-    search_query = request.GET.get('search', '')
+    search_query = request.GET.get('search', '').strip()
     alunos = Aluno.objects.all().order_by('nome')
     if search_query:
         alunos = alunos.filter(Q(nome__icontains=search_query))
+        for aluno in alunos:
+            pattern = re.compile(re.escape(search_query), re.IGNORECASE)
+            aluno.nome = mark_safe(
+                pattern.sub(
+                    lambda match: f'<span style="background-color: yellow; font-weight: bold;">{match.group(0)}</span>',
+                    aluno.nome
+                )
+            )
     paginator = Paginator(alunos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
