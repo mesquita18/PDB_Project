@@ -13,3 +13,7 @@ def periodo_ordinal(value):
     suffix = {1: "°", 2: "°", 3: "°"}.get(value % 10, "°")
     
     return f"{value}{suffix}"
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

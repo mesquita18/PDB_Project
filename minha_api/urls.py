@@ -1,10 +1,10 @@
 from django.urls import path,include
 import rest_api.views as views
-from django.contrib import admin
 
 urlpatterns = [
-    path('admin', admin.site.urls),
     path('',views.realizar_login),
+    path('usuarios/logout.html', views.realizar_logout, name='logout'),
+    path('login-error.html', views.login_error, name='login-error'),
     path('usuarios/cadastro.html',views.realizar_cadastro,name='cadastro_usuario'),
     path('usuarios/home.html',views.home),
     path('usuarios/cadastro-aluno.html',views.cadastro_aluno,name='cadastro_aluno'),
@@ -17,5 +17,5 @@ urlpatterns = [
     path('usuarios/criar-turma.html',views.criar_turma,name='criar_turma'),
     path('usuarios/modificar-turma.html/<str:cod_disciplina>/<str:semestre>',views.modificar_turma,name='modificar_turma'),
     path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina'),
-    path('turmas/excluir-turma/<int:id>/', views.excluir_turma, name='excluir_turma')
+    path('notas/turma/<int:turma_id>/', views.listar_notas_turma, name='listar_notas_turma'),
 ]

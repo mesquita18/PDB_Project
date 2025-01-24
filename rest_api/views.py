@@ -2,10 +2,11 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework import permissions, viewsets
 from django.shortcuts import render,redirect
+from django.contrib.auth import logout
 from rest_framework.decorators import api_view,permission_classes,action
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserSerializer,Disciplina,DisciplinaSerializer,Aluno,AlunoSerializer
+from .models import UserSerializer,Disciplina,DisciplinaSerializer,Aluno,AlunoSerializer,Nota,NotaSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework.views import APIView
@@ -29,6 +30,8 @@ from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
 from django.db.models import Count
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import re
 
 @login_required
@@ -49,13 +52,6 @@ def realizar_cadastro(request):
             email=email if email else None,
         )
         return render(request,'usuarios/cadastro.html',{'message':'Usuário cadastrado com sucesso!'})
-
-@login_required
-def excluir_turma(request, id):
-    turma = get_object_or_404(Turma, id=id)
-    turma.delete()
-    messages.success(request, f"A turma foi excluída com sucesso!")
-    return redirect('listar_turmas')
 
 @login_required
 def home(request):
@@ -109,7 +105,6 @@ def cadastro_aluno(request):
             "message": "Aluno matriculado!"
         })
 
-@login_required
 def realizar_login(request):
     if request.method == 'GET':
         return render(request,'usuarios/login.html')
@@ -123,10 +118,13 @@ def realizar_login(request):
         return render(request, 'usuarios/login.html', {
             'erro': 'Usuário ou senha inválidos!'
         })
-    else:
-        return render(request, 'usuarios/login.html', {
-            'erro': 'Bad Request!'
-        })
+
+def realizar_logout(request):
+    logout(request)
+    return render(request,'usuarios/logout.html')
+
+def login_error(request):
+    return render(request,'usuarios/login-error.html')
 
 @login_required
 def modificar_turma(request,cod_disciplina,semestre):
@@ -275,3 +273,49 @@ def visualizar_alunos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'usuarios/alunos.html', {'page_obj': page_obj, 'search_query': search_query})
+
+@login_required
+def listar_notas_turma(request, turma_id):
+    if request.method == 'GET':
+        turma = get_object_or_404(Turma, id=turma_id)
+        notas = Nota.objects.filter(turma=turma)
+        notas_dict = {nota.aluno.id: nota for nota in notas}
+        alunos_turma = AlunoTurma.objects.filter(turma=turma).select_related('aluno')
+        paginator = Paginator(alunos_turma, 5)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'usuarios/notas-alunos.html', {
+            'turma': turma,
+            'page_obj': page_obj,
+            'notas_dict': notas_dict,
+        })
+    if request.method == 'POST':
+        turma = get_object_or_404(Turma, id=turma_id)
+        alunos_turma = AlunoTurma.objects.filter(turma=turma)
+        notas = Nota.objects.filter(turma=turma)
+        for aluno_turma in alunos_turma:
+            nota = notas.filter(aluno=aluno_turma.aluno).first()
+            if not nota:
+                nota = Nota.objects.create(aluno=aluno_turma.aluno, turma=turma)
+            nota1 = float(request.POST.get(f'nota1_{aluno_turma.aluno.id}', nota.nota1 or 0.0))
+            nota2 = float(request.POST.get(f'nota2_{aluno_turma.aluno.id}', nota.nota2 or 0.0))
+            nota3 = float(request.POST.get(f'nota3_{aluno_turma.aluno.id}', nota.nota3 or 0.0))
+            final = float(request.POST.get(f'final_{aluno_turma.aluno.id}', nota.final or 0.0))
+            if (
+                nota1 != nota.nota1 or
+                nota2 != nota.nota2 or
+                nota3 != nota.nota3 or
+                final != nota.final
+            ):
+                try:
+                    nota.nota1 = nota1 if nota1 else None
+                    nota.nota2 = nota2 if nota2 else None
+                    nota.nota3 = nota3 if nota3 else None
+                    nota.final = final if final else None
+                except ValueError:
+                    nota.nota1 = 0.0
+                    nota.nota2 = 0.0
+                    nota.nota3 = 0.0
+                    nota.final = 0.0
+            nota.save()
+        return redirect('listar_turmas')

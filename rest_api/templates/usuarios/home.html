@@ -172,7 +172,11 @@
             <li><a href="http://127.0.0.1:8000/usuarios/alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
             <li><a href="http://127.0.0.1:8000/usuarios/disciplinas.html"><i class="fas fa-book"></i> Disciplinas</a></li>
             <li><a href="http://127.0.0.1:8000/usuarios/turmas.html"><i class="fas fa-users"></i> Turmas</a></li>
-            <li><a href="http://127.0.0.1:8000"><i class="fas fa-sign-out-alt"></i> Voltar para a tela de login</a></li>
+            <li>
+                <a href="http://127.0.0.1:8000/usuarios/logout.html" onclick="return confirmLogout(event)">
+                    <i class="fas fa-sign-out-alt"></i> Voltar para a tela de login
+                </a>
+            </li>
         </ul>
     </nav>
     <div class="content">
@@ -188,6 +192,14 @@
                 sidebar.classList.toggle('active');
             });
         });
-    </script>
+        function confirmLogout(event) {
+            const confirmation = confirm("Você tem certeza que deseja realizar o logout?");
+            if (!confirmation) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+    </script>    
 </body>
 </html>

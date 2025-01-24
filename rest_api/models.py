@@ -48,7 +48,7 @@ class Aluno(models.Model):
 class Turma(models.Model):
     permission_classes = [IsAuthenticated]
     disciplina = models.ForeignKey(
-        Disciplina,  # Referência à tabela de disciplinas
+        Disciplina,
         on_delete=models.CASCADE,
         related_name='turmas'
     )
@@ -71,7 +71,7 @@ class Turma(models.Model):
 
 class AlunoTurma(models.Model):
     aluno = models.ForeignKey('Aluno', on_delete=models.CASCADE, related_name="turmas")
-    turma = models.ForeignKey('Turma', on_delete=models.CASCADE, related_name="alunos")  # Relação com a turma
+    turma = models.ForeignKey('Turma', on_delete=models.CASCADE, related_name="alunos")
     class Meta:
         unique_together = ('aluno', 'turma')
 
@@ -106,19 +106,20 @@ class TurmaSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Turma
-        fields = ['disciplina', 'semestre', 'alunos']
-
+        fields = ['disciplina', 'semestre', 'alunos','notas']
+    def get_notas(self, obj):
+        notas = Nota.objects.filter(turma=obj).values('aluno__nome', 'nota')
+        return list(notas)
     def create(self, validated_data):
         alunos_ids = validated_data.pop('alunos', [])
         turma = Turma.objects.create(**validated_data)
         if alunos_ids:
             alunos = Aluno.objects.filter(id__in=alunos_ids)
-            turma.alunos.set(alunos)  # Associa os alunos à turma
+            turma.alunos.set(alunos)
         return turma
     def update(self, instance, validated_data):
         alunos_ids = validated_data.pop('alunos', [])
         instance = super().update(instance, validated_data)
-        # Atualizar alunos vinculados à turma
         AlunoTurma.objects.filter(turma=instance).delete()
         for aluno_id in alunos_ids:
             AlunoTurma.objects.create(aluno_id=aluno_id, turma=instance)
@@ -136,11 +137,74 @@ class AlunoTurmaSerializer(serializers.ModelSerializer):
     turma = serializers.SerializerMethodField()
     semestre = serializers.CharField(source='turma.semestre', read_only=True)
     def get_alunos(self, obj):
-        # Pega todos os alunos relacionados à turma atual
         alunos = Aluno.objects.filter(turmas__turma=obj.id).values_list('nome', flat=True)
-        return list(alunos)  # Retorna uma lista com os nomes dos alunos
+        return list(alunos)
     def get_turma(self, obj):
         return obj.turma.disciplina.nome_disciplina
     class Meta:
         model = AlunoTurma
         fields = ['turma','semestre','alunos']
+
+class Nota(models.Model):
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='notas')
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE, related_name='notas')
+    nota1 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    nota2 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    nota3 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    final = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    _status = models.CharField(max_length=20, default="PENDENTE")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['aluno', 'turma'],
+                name='unique_aluno_turma_nota'
+            )
+        ]
+
+    @property
+    def media(self):
+        notas = [self.nota1, self.nota2, self.nota3]
+        notas_validas = [nota for nota in notas if nota is not None]
+        if len(notas_validas) >= 2:
+            maiores_notas = sorted(notas_validas, reverse=True)[:2]
+            return round(sum(maiores_notas) / 2, 2)
+        return None
+
+    @property
+    def media_final(self):
+        if self.media is not None and self.final is not None:
+            return round((self.media + self.final) / 2, 2)
+        return self.media
+
+    @property
+    def status(self):
+        if self.media is None:
+            return "PENDENTE"
+        if self.media >= 7:
+            return "APROVADO"
+        elif self.media >= 4:
+            if self.final is None:
+                return "PENDENTE"
+            return "APROVADO" if self.media_final >= 5 else "REPROVADO"
+        return "REPROVADO"
+
+    def atualizar_status(self):
+        self._status = self.status
+
+    def save(self, *args, **kwargs):
+        self.atualizar_status()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.aluno.nome} - {self.turma.disciplina.nome_disciplina} ({self.status})"
+
+class NotaSerializer(serializers.ModelSerializer):
+    aluno_nome = serializers.CharField(source='aluno.nome', read_only=True)
+    turma_disciplina = serializers.CharField(source='turma.disciplina.nome_disciplina', read_only=True)
+    media = serializers.ReadOnlyField()
+    media_final = serializers.ReadOnlyField()
+    status = serializers.ReadOnlyField()
+    class Meta:
+        model = Nota
+        fields = ['aluno', 'turma', 'nota1', 'nota2', 'nota3', 'final', 'media', 'media_final', 'status']

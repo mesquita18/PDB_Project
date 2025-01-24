@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('/static/css/images/image_scholar.webp') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            color: rgb(32, 242, 4);
+            background-color: rgba(0, 128, 0, 0.7);
+            padding: 30px;
+            border-radius: 18px;
+            font-size: 36px;
+            margin-bottom: 20px;
+            margin-top: -50px;
+            animation: pulse 2s infinite;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: rgb(0, 123, 255);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        a:hover {
+            background-color: rgb(1, 121, 249);
+            color: rgb(247, 249, 249);
+            border: 2px solid rgb(0, 128, 255);
+        }
+        @keyframes pulse {
+            0% {
+                transform: translate(0%, 0%) scale(1);
+            }
+            50% {
+                transform: translate(0%, 0%) scale(1.1);
+            }
+            100% {
+                transform: translate(0%, 0%) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Você foi desconectado!</h1>
+        <a href="http://127.0.0.1:8000">Voltar para o login</a>
+    </div>
+</body>
+</html>

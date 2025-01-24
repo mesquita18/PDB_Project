@@ -81,6 +81,23 @@
             background-color: darkgreen;
         }
 
+        .edit-btn2 {
+            display: inline-block;
+            padding: 5px 5px;
+            background-color: rgb(10, 78, 195);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: center;
+            width: 60px;
+            height: 10px;
+        }
+
+        .edit-btn2:hover {
+            background-color: rgb(0, 53, 145);
+        }
+
         .green-button {
             position: absolute;
             top: 20px;
@@ -233,7 +250,7 @@
                         <td>{{ turma.semestre }}</td>
                         <td>
                             <a href="{% url 'modificar_turma' turma.disciplina.cod_disciplina turma.semestre %}" class="edit-btn">Editar</a>
-                            <a href="{% url 'excluir_turma' turma.id %}" class="delete-btn" onclick="return confirm('Tem certeza de que deseja excluir esta turma?')">Excluir</a>
+                            <a href="{% url 'listar_notas_turma' turma.id %}" class="edit-btn2">Notas</a>
                         </td>
                     </tr>
                     {% endfor %}
