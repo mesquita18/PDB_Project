@@ -148,7 +148,17 @@ def modificar_turma(request,cod_disciplina,semestre):
         AlunoTurma.objects.filter(turma=turma).delete()
         for aluno in alunos_selecionados:
             AlunoTurma.objects.create(turma=turma, aluno=aluno)
-        return render(request, "usuarios/home.html",{'message':'Turma atualizada!'})
+        messages.success(request, 'Turma atualizada!')
+        return redirect('listar_turmas')
+
+@login_required
+def historico_aluno(request, aluno_id):
+    aluno = get_object_or_404(Aluno, id=aluno_id)
+    notas = Nota.objects.filter(aluno=aluno).select_related('turma')
+    return render(request, 'usuarios/historico-aluno.html', {
+        'aluno': aluno,
+        'notas': notas,
+    })
 
 @login_required
 def cadastrar_disciplina(request):

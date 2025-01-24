@@ -147,6 +147,11 @@
             font-weight: bold;
         }
 
+        .acoes-col {
+            width: 10%;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -165,6 +170,7 @@
                     <tr>
                         <th>nome</th>
                         <th>cpf</th>
+                        <th class="acoes-col">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -172,6 +178,12 @@
                     <tr>
                         <td>{{aluno.nome|safe}}</td>
                         <td>{{aluno.cpf}}</td>
+                        <td class="acoes-col">
+                            <a href="{% url 'historico_aluno' aluno.id %}" 
+                               style="text-decoration: none; padding: 4px 10px; border: 2px solid #007bff; border-radius: 5px; color: #007bff; background-color: transparent; font-weight: bold; transition: background-color 0.3s, color 0.3s;">
+                                Histórico
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

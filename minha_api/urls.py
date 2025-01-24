@@ -18,4 +18,5 @@ urlpatterns = [
     path('usuarios/modificar-turma.html/<str:cod_disciplina>/<str:semestre>',views.modificar_turma,name='modificar_turma'),
     path('usuarios/disciplina.html/<str:cod_disciplina>',views.detalhar_disciplina,name='detalhar_disciplina'),
     path('notas/turma/<int:turma_id>/', views.listar_notas_turma, name='listar_notas_turma'),
+    path('historico/<int:aluno_id>/', views.historico_aluno, name='historico_aluno'),
 ]

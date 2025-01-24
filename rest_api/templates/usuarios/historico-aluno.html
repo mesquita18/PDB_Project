@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico do Aluno</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Histórico de {{ aluno.nome }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Turma</th>
+                <th>Semestre</th>
+                <th>Nota 1</th>
+                <th>Nota 2</th>
+                <th>Nota 3</th>
+                <th>Nota Final</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nota in notas %}
+            <tr>
+                <td>{{ nota.turma.disciplina.nome_disciplina }}</td>
+                <td>{{ nota.turma.semestre }}</td>
+                <td>{{ nota.nota1|default:"0.0" }}</td>
+                <td>{{ nota.nota2|default:"0.0" }}</td>
+                <td>{{ nota.nota3|default:"0.0" }}</td>
+                <td>{{ nota.final|default:"0.0" }}</td>
+                <td>{{ nota.status|default:"PENDENTE" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'listar_alunos' %}" style="text-decoration: none; color: #007bff;">Voltar</a>
+    </div>
+</body>
+</html>
