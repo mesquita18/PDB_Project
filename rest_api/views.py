@@ -29,6 +29,8 @@ from django.http import HttpResponse
 from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
 from django.db.models import Count
 from django.contrib import messages
+from collections import defaultdict
+from django.db import transaction
 from django.utils.safestring import mark_safe
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -145,20 +147,42 @@ def modificar_turma(request,cod_disciplina,semestre):
     if request.method == "POST":
         alunos_ids = request.POST.getlist("alunos")
         alunos_selecionados = Aluno.objects.filter(id__in=alunos_ids)
-        AlunoTurma.objects.filter(turma=turma).delete()
-        for aluno in alunos_selecionados:
-            AlunoTurma.objects.create(turma=turma, aluno=aluno)
+        with transaction.atomic():
+            AlunoTurma.objects.filter(turma=turma).delete()
+            for aluno in alunos_selecionados:
+                AlunoTurma.objects.create(turma=turma, aluno=aluno)
+                Nota.objects.get_or_create(
+                    aluno=aluno,
+                    turma=turma,
+                )
         messages.success(request, 'Turma atualizada!')
         return redirect('listar_turmas')
 
 @login_required
 def historico_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
-    notas = Nota.objects.filter(aluno=aluno).select_related('turma')
-    return render(request, 'usuarios/historico-aluno.html', {
+    notas = Nota.objects.filter(aluno=aluno).select_related('turma__disciplina')
+    notas_por_periodo = defaultdict(list)
+    for nota in notas:
+        periodo = nota.turma.semestre
+        notas_por_periodo[periodo].append({
+            'nome': nota.turma.disciplina.nome_disciplina,
+            'nota1': nota.nota1,
+            'nota2': nota.nota2,
+            'nota3': nota.nota3,
+            'final': nota.final,
+            'media': nota.media,
+            'media_final':nota.media_final,
+            'status':nota.status
+        })
+
+    notas_por_periodo = dict(sorted(notas_por_periodo.items()))
+
+    context = {
         'aluno': aluno,
-        'notas': notas,
-    })
+        'notas_por_periodo': notas_por_periodo,
+    }
+    return render(request, 'usuarios/historico-aluno.html', context)
 
 @login_required
 def cadastrar_disciplina(request):
