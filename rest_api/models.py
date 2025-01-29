@@ -152,7 +152,7 @@ class Nota(models.Model):
     nota2 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
     nota3 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
     final = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    _status = models.CharField(max_length=20, default="PENDENTE")
+    _status = models.CharField(max_length=20, default="PENDENTE", editable=False)
 
     class Meta:
         constraints = [
@@ -175,7 +175,9 @@ class Nota(models.Model):
     def media_final(self):
         if self.media is not None and self.final is not None:
             return round((self.media + self.final) / 2, 2)
-        return self.media
+        elif self.media >=7.0:
+            self.final=0.0
+        return self.media if self.media is not None else None
 
     @property
     def status(self):
@@ -189,11 +191,8 @@ class Nota(models.Model):
             return "APROVADO" if self.media_final >= 5 else "REPROVADO"
         return "REPROVADO"
 
-    def atualizar_status(self):
-        self._status = self.status
-
     def save(self, *args, **kwargs):
-        self.atualizar_status()
+        self._status = self.status
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -205,6 +204,8 @@ class NotaSerializer(serializers.ModelSerializer):
     media = serializers.ReadOnlyField()
     media_final = serializers.ReadOnlyField()
     status = serializers.ReadOnlyField()
+    _status = serializers.ReadOnlyField()
+
     class Meta:
         model = Nota
-        fields = ['aluno', 'turma', 'nota1', 'nota2', 'nota3', 'final', 'media', 'media_final', 'status']
+        fields = ['aluno', 'turma', 'nota1', 'nota2', 'nota3', 'final', 'media', 'media_final', 'status', '_status']

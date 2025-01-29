@@ -6,14 +6,15 @@ def periodo_ordinal(value):
         value = int(value)
     except (ValueError, TypeError):
         return value
-
-    # Definindo o sufixo
     if 10 <= value % 100 <= 20:
         return f"{value}°"
     suffix = {1: "°", 2: "°", 3: "°"}.get(value % 10, "°")
-    
     return f"{value}{suffix}"
 
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+@register.filter
+def none_to_zero(value):
+    return 0.0 if value is None else value

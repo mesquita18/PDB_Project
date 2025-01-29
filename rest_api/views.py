@@ -1,39 +1,17 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
-from rest_framework import permissions, viewsets
-from django.shortcuts import render,redirect
 from django.contrib.auth import logout
-from rest_framework.decorators import api_view,permission_classes,action
 from rest_framework.response import Response
-from rest_framework import status
-from .models import UserSerializer,Disciplina,DisciplinaSerializer,Aluno,AlunoSerializer,Nota,NotaSerializer
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
-from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import AllowAny
+from .models import UserSerializer,Disciplina,DisciplinaSerializer,Aluno,AlunoSerializer,Nota,NotaSerializer,Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
-from rest_framework_simplejwt.tokens import AccessToken
-from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from django.http import HttpResponse
-import json,jwt,requests
-from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import Turma,TurmaSerializer,AlunoTurma,AlunoTurmaSerializer
-from django.db.models import Count
+from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
 from django.db import transaction
 from django.utils.safestring import mark_safe
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 import re
 
 @login_required
@@ -121,6 +99,7 @@ def realizar_login(request):
             'erro': 'Usuário ou senha inválidos!'
         })
 
+@login_required
 def realizar_logout(request):
     logout(request)
     return render(request,'usuarios/logout.html')
@@ -331,25 +310,26 @@ def listar_notas_turma(request, turma_id):
             nota = notas.filter(aluno=aluno_turma.aluno).first()
             if not nota:
                 nota = Nota.objects.create(aluno=aluno_turma.aluno, turma=turma)
-            nota1 = float(request.POST.get(f'nota1_{aluno_turma.aluno.id}', nota.nota1 or 0.0))
-            nota2 = float(request.POST.get(f'nota2_{aluno_turma.aluno.id}', nota.nota2 or 0.0))
-            nota3 = float(request.POST.get(f'nota3_{aluno_turma.aluno.id}', nota.nota3 or 0.0))
-            final = float(request.POST.get(f'final_{aluno_turma.aluno.id}', nota.final or 0.0))
+            def parse_float(value, previous_value):
+                if value == '':
+                    return previous_value
+                try:
+                    return float(value)
+                except ValueError:
+                    return previous_value
+            nota1 = parse_float(request.POST.get(f'nota1_{aluno_turma.aluno.id}'), nota.nota1)
+            nota2 = parse_float(request.POST.get(f'nota2_{aluno_turma.aluno.id}'), nota.nota2)
+            nota3 = parse_float(request.POST.get(f'nota3_{aluno_turma.aluno.id}'), nota.nota3)
+            final = parse_float(request.POST.get(f'final_{aluno_turma.aluno.id}'), nota.final)
             if (
                 nota1 != nota.nota1 or
                 nota2 != nota.nota2 or
                 nota3 != nota.nota3 or
                 final != nota.final
             ):
-                try:
-                    nota.nota1 = nota1 if nota1 else None
-                    nota.nota2 = nota2 if nota2 else None
-                    nota.nota3 = nota3 if nota3 else None
-                    nota.final = final if final else None
-                except ValueError:
-                    nota.nota1 = 0.0
-                    nota.nota2 = 0.0
-                    nota.nota3 = 0.0
-                    nota.final = 0.0
-            nota.save()
+                nota.nota1 = nota1
+                nota.nota2 = nota2
+                nota.nota3 = nota3
+                nota.final = final
+                nota.save()
         return redirect('listar_turmas')
