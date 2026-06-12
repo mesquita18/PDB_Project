@@ -221,7 +221,9 @@
     <nav class="sidebar">
         {% csrf_token %}
         <br><br><ul>
+            {% if request.user.is_superuser %}
             <li><a href="http://127.0.0.1:8000/usuarios/usuarios.html"><i class="fas fa-user"></i> Usuários</a></li>
+            {% endif %}
             <li><a href="http://127.0.0.1:8000/usuarios/alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
             <li><a href="http://127.0.0.1:8000/usuarios/disciplinas.html"><i class="fas fa-book"></i> Disciplinas</a></li>
             <li><a href="http://127.0.0.1:8000/usuarios/turmas.html"><i class="fas fa-users"></i> Turmas</a></li>
