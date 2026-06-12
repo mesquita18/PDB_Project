@@ -108,15 +108,15 @@ def cadastro_aluno(request):
         })
 
 def realizar_login(request):
-    if request.method == 'GET':
-        return render(request,'usuarios/login.html')
+    if request.method in ('GET', 'HEAD'):
+        return render(request, 'usuarios/login.html')
     elif request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request,user)
-            return redirect('usuarios/home.html')
+            return redirect('home')
         return render(request, 'usuarios/login.html', {
             'erro': 'Usuário ou senha inválidos!'
         })
@@ -228,6 +228,10 @@ def cadastrar_disciplina(request):
 
 @login_required
 def visualizar_usuarios(request):
+    # Apenas coordenador (superuser) pode visualizar/editar usuários
+    if not request.user.is_superuser:
+        return render(request, 'usuarios/login-error.html', {'erro': 'Acesso negado: somente o coordenador pode visualizar usuários.'})
+
     search_query = request.GET.get('search', '').strip()
     usuarios = User.objects.all()
     if search_query:
@@ -287,9 +291,12 @@ def visualizar_disciplinas(request):
 @login_required
 def visualizar_turmas(request):
     search_query = request.GET.get('search', '').strip()
-    # Professores veem apenas suas turmas; coordenador vê todas
+    # Alunos veem apenas suas turmas; professores veem suas turmas; coordenador vê todas
     if hasattr(request.user, 'profile') and request.user.profile.role == 'professor':
         turmas = Turma.objects.filter(professor=request.user).order_by('semestre')
+    elif hasattr(request.user, 'aluno_profile') and request.user.aluno_profile is not None:
+        aluno = request.user.aluno_profile
+        turmas = Turma.objects.filter(alunos__aluno=aluno).order_by('semestre')
     else:
         turmas = Turma.objects.all().order_by('semestre')
     if search_query:
@@ -310,7 +317,16 @@ def visualizar_turmas(request):
 @login_required
 def visualizar_alunos(request):
     search_query = request.GET.get('search', '').strip()
-    alunos = Aluno.objects.all().order_by('nome')
+    # Aluno vê apenas seu próprio registro; professor vê alunos das suas turmas; coordenador vê todos
+    if request.user.is_superuser:
+        alunos = Aluno.objects.all().order_by('nome')
+    elif hasattr(request.user, 'profile') and request.user.profile.role == 'professor':
+        alunos = Aluno.objects.filter(turmas__turma__professor=request.user).distinct().order_by('nome')
+    elif hasattr(request.user, 'aluno_profile') and request.user.aluno_profile is not None:
+        aluno = request.user.aluno_profile
+        alunos = Aluno.objects.filter(id=aluno.id)
+    else:
+        alunos = Aluno.objects.none()
     if search_query:
         alunos = alunos.filter(Q(nome__icontains=search_query))
         for aluno in alunos:

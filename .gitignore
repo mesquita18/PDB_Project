@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Django
+*.log
+*.pot
+db.sqlite3
+db.sqlite3.bak
+/staticfiles/
+/media/
+
+# Byte-compiled / distribution
+*.egg-info/
+*.egg
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local artifacts
+cookies.txt
