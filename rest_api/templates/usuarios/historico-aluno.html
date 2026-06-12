@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico do Aluno</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1{
+            text-align: center;
+        }
+        .info-aluno {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .periodo {
+            text-align: left;
+            margin-left: 5%;
+            margin-bottom: 5px;
+            padding: 8px;
+            background-color: rgba(128, 128, 128, 0.2);
+            font-weight: bold;
+            border-radius: 8px;
+            width: fit-content;
+        }
+    </style>
+</head>
+<body>
+    <h1>Histórico Escolar do Aluno</h1>
+    <div class="info-aluno">
+        <p><strong>Aluno:</strong> {{ aluno.nome }}</p>
+        <p><strong>CPF:</strong> {{ aluno.cpf }}</p>
+    </div>
+    {% for periodo, disciplinas in notas_por_periodo.items %}
+    <div class="period-section">
+        <h3 class="periodo">{{ periodo }}</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Disciplina</th>
+                    <th>Nota 1</th>
+                    <th>Nota 2</th>
+                    <th>Nota 3</th>
+                    <th>Final</th>
+                    <th>Média</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for disciplina in disciplinas %}
+                <tr>
+                    <td>{{ disciplina.nome }}</td>
+                    <td>{{ disciplina.nota1|default:"0.0" }}</td>
+                    <td>{{ disciplina.nota2|default:"0.0" }}</td>
+                    <td>{{ disciplina.nota3|default:"0.0" }}</td>
+                    <td>{{ disciplina.final|default:"0.0" }}</td>
+                    <td>{{ disciplina.media|default:"0.0" }}</td>
+                    <td>{{ disciplina.status|default:"PENDENTE" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'listar_alunos' %}" style="text-decoration: none; color: #007bff;">Voltar</a>
+    </div>
+</body>
+</html>

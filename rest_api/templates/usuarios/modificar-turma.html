@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style_3.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Atualizar Turma</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'css/images/image_scholar.webp' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        ul {
+            padding: 0;
+            text-align: center;
+        }
+        li {
+            list-style-type: none;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #alunos-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #alunos-container div {
+            flex: 1 1 calc(33.33% - 10px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        #alunos-container label {
+            flex-grow: 1;
+            text-align: left;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .center-link {
+            display: flex;               /* Usa flexbox */
+            justify-content: center;     /* Centraliza horizontalmente */
+            align-items: center;         /* Alinha no centro verticalmente */
+            margin-top: 20px;            /* Espaçamento acima do link */
+        }
+
+        .center-link li {
+            list-style-type: none;       /* Remove os marcadores de lista */
+            text-align: center;          /* Centraliza o texto do link */
+        }
+        
+        .center-link label {
+            display: inline-block;           /* Torna a label um bloco inline, assim como um link */
+            padding: 10px 20px;              /* Espaçamento interno do link */
+            background-color: #007bff;       /* Cor de fundo azul (como o link) */
+            color: white;                    /* Cor do texto */
+            text-decoration: none;           /* Remove qualquer sublinhado */
+            border-radius: 4px;              /* Borda arredondada */
+            font-size: 16px;                 /* Tamanho da fonte */
+            transition: background-color 0.3s; /* Transição suave para o hover */
+        }
+
+        .center-link label:hover {
+            background-color: #0056b3;       /* Cor de fundo azul escuro ao passar o mouse */
+        }
+
+        .center-button-container {
+            display: flex;                  /* Habilita o Flexbox */
+            justify-content: center;        /* Centraliza o botão horizontalmente */
+            align-items: center;            /* Centraliza o botão verticalmente, caso necessário */
+            height: 100%;                    /* Garante que o container ocupe toda a altura disponível */
+            margin-top: 20px;                /* Espaçamento superior, se necessário */
+        }
+
+        .center-button-container button {
+            padding: 10px 20px;              /* Espaçamento interno do botão */
+            background-color: #007bff;       /* Cor de fundo */
+            color: white;                    /* Cor do texto */
+            border: none;                    /* Remove borda */
+            border-radius: 5px;              /* Borda arredondada */
+            font-size: 16px;                 /* Tamanho da fonte */
+            cursor: pointer;                 /* Altera o cursor para pointer */
+        }
+
+        .center-button-container button:hover {
+            background-color: #0056b3;       /* Cor de fundo ao passar o mouse */
+        }
+
+    </style>
+</head>
+<body>
+    <form method="post" action="{% url 'modificar_turma' cod_disciplina semestre %}">
+        {% csrf_token %}
+        <input type="hidden" name="cod_disciplina" value="{{ cod_disciplina }}">
+        <input type="hidden" name="semestre" value="{{ semestre }}">
+        <div class="center-link">
+            <label for="alunos">Selecione os alunos</label>
+        </div>
+        <div id="alunos-container" class="center-button-container">
+            {% for aluno in alunos_cadastrados %}
+                <div>
+                    <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}" checked >
+                    <label for="aluno_{{ aluno.id }}">{{ aluno.nome }}</label>
+                </div>
+            {% endfor %}
+            {% for aluno in alunos_nao_cadastrados %}
+                <div>
+                    <input type="checkbox" id="aluno_{{ aluno.id }}" name="alunos" value="{{ aluno.id }}">
+                    <label for="aluno_{{ aluno.id }}">{{ aluno.nome }}</label>
+                </div>
+            {% endfor %}
+            <button type="submit">Atualizar Turma</button>
+        </div>    
+        <div id="pagination-controls" style="text-align: center; margin-top: 20px;">
+            <button id="prev-page" type="button" disabled>Anterior</button>
+            <span id="current-page">1</span> / <span id="total-pages">1</span>
+            <button id="next-page" type="button">Próximo</button>
+        </div>
+        <div class="center-link">
+            <li><a href="http://127.0.0.1:8000/usuarios/turmas.html"><i class="fas fa-sign-out-alt"></i> Voltar para as turmas</a></li>
+        </div>
+    </form>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const alunos = Array.from(document.querySelectorAll('#alunos-container > div'));
+            const itemsPerPage = 9;
+            let currentPage = 1;
+            function renderPage(page) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                alunos.forEach((aluno, index) => {
+                    aluno.style.display = index >= start && index < end ? 'flex' : 'none';
+                });
+                document.getElementById('current-page').textContent = page;
+                document.getElementById('total-pages').textContent = Math.ceil(alunos.length / itemsPerPage);
+                document.getElementById('prev-page').disabled = page === 1;
+                document.getElementById('next-page').disabled = page === Math.ceil(alunos.length / itemsPerPage);
+            }
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (currentPage < Math.ceil(alunos.length / itemsPerPage)) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
+            });
+            renderPage(currentPage);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/webp" href='/static/css/images/image_scholar_04.webp'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style_3.css' %}">
+    <link rel="stylesheet" href="{% static 'css/toast.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Deletar Disciplina</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'css/images/image_scholar.webp' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #dc3545;
+        }
+
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .warning-box p {
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+
+        .warning-box strong {
+            color: #d39e00;
+        }
+
+        .info-item {
+            background-color: #e7f3ff;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+
+        .info-item label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .info-item span {
+            font-size: 1.1em;
+            color: #007bff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .button-group button,
+        .button-group a {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <!-- Django Messages (invisible container para toast) -->
+    {% if messages %}
+        <div id="django-messages" style="display: none;">
+            {% for message in messages %}
+                <li data-type="{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">{{ message }}</li>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-container">
+        <h1><i class="fas fa-trash"></i> Deletar Disciplina</h1>
+        
+        <div class="warning-box">
+            <p><strong>⚠️ Atenção!</strong></p>
+            <p>Você está prestes a deletar a seguinte disciplina:</p>
+        </div>
+
+        <div class="info-item">
+            <label>Código:</label>
+            <span>{{ disciplina.cod_disciplina }}</span>
+        </div>
+
+        <div class="info-item">
+            <label>Nome:</label>
+            <span>{{ disciplina.nome_disciplina }}</span>
+        </div>
+
+        <div class="info-item">
+            <label>Carga Horária:</label>
+            <span>{{ disciplina.carga_horaria }}h</span>
+        </div>
+
+        <div class="info-item">
+            <label>Período:</label>
+            <span>{{ disciplina.periodo }}</span>
+        </div>
+
+        {% if turmas_count > 0 %}
+            <div class="warning-box" style="background-color: #f8d7da; border-color: #f5c6cb;">
+                <p><strong style="color: #721c24;">⚠️ Aviso Importante:</strong></p>
+                <p style="color: #721c24;">Esta disciplina possui <strong>{{ turmas_count }}</strong> turma(s) associada(s).</p>
+                <p style="color: #721c24;">Deletar esta disciplina também deletará todas as turmas e suas notas!</p>
+            </div>
+        {% endif %}
+
+        <form method="POST" style="margin-top: 25px;">
+            {% csrf_token %}
+            <div class="button-group">
+                <button type="submit" class="btn-delete"><i class="fas fa-check"></i> Confirmar Exclusão</button>
+                <a href="{% url 'listar_disciplinas' %}" class="btn-cancel"><i class="fas fa-times"></i> Cancelar</a>
+            </div>
+        </form>
+    </div>
+    
+    <script src="{% static 'js/toast.js' %}"></script>
+</body>
+</html>
