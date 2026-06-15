@@ -13,7 +13,28 @@ def periodo_ordinal(value):
 
 @register.filter
 def get_item(dictionary, key):
-    return dictionary.get(key)
+    try:
+        # Support dict-like and objects; be defensive for None
+        if dictionary is None:
+            return None
+        if hasattr(dictionary, 'get'):
+            return dictionary.get(key)
+        return getattr(dictionary, key, None)
+    except Exception:
+        return None
+
+
+@register.filter
+def dict_get(obj, key):
+    """Return a value from a dict or attribute from an object, fallback to empty string."""
+    try:
+        if obj is None:
+            return ""
+        if isinstance(obj, dict):
+            return obj.get(key, "")
+        return getattr(obj, key, "")
+    except Exception:
+        return ""
 
 @register.filter
 def none_to_zero(value):

@@ -301,9 +301,15 @@
                         </td>
                         <td>{{ turma.semestre }}</td>
                         <td>
-                            <a href="{% url 'editar_turma' turma.id %}" class="edit-btn">Editar</a>
-                            <a href="{% url 'listar_notas_turma' turma.id %}" class="edit-btn2">Notas</a>
-                            <a href="{% url 'deletar_turma' turma.id %}" class="delete-btn">Deletar</a>
+                            {% if request.user.is_superuser %}
+                                <a href="{% url 'editar_turma' turma.id %}" class="edit-btn">Editar</a>
+                            {% endif %}
+                            {% if request.user.is_superuser or turma.professor == request.user %}
+                                <a href="{% url 'listar_notas_turma' turma.id %}" class="edit-btn2">Notas</a>
+                            {% endif %}
+                            {% if request.user.is_superuser %}
+                                <a href="{% url 'deletar_turma' turma.id %}" class="delete-btn">Deletar</a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

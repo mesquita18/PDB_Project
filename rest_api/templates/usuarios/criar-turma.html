@@ -131,6 +131,15 @@
                     </select>
                 </div>                
                 <div class="form-group">
+                    <label for="professor">Professor responsável:</label>
+                    <select id="professor" name="professor" required>
+                        <option value="" disabled selected>Selecione um professor</option>
+                        {% for prof in professores %}
+                        <option value="{{ prof.id }}">{{ prof.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="alunos">IDs dos Alunos (selecione os alunos da turma):</label>
                     <select id="alunos" name="alunos" multiple="multiple" class="form-select">
                         {% for aluno in alunos %}

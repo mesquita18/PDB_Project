@@ -63,10 +63,16 @@ def criar_turma(request):
     if request.method == 'GET':
         disciplinas = Disciplina.objects.all()
         alunos = Aluno.objects.all()
-        return render(request,'usuarios/criar-turma.html',{'alunos': alunos,'disciplinas':disciplinas})
+        professores = User.objects.filter(profile__role='professor')
+        return render(request,'usuarios/criar-turma.html',{
+            'alunos': alunos,
+            'disciplinas': disciplinas,
+            'professores': professores,
+        })
     if request.method == 'POST':
         semestre = request.POST.get('semestre')
         cod_disciplina = request.POST.get('cod_disciplina')
+        professor_id = request.POST.get('professor')
         alunos_ids = request.POST.getlist('alunos')
         try:
             disciplina = Disciplina.objects.get(cod_disciplina=cod_disciplina)
@@ -74,7 +80,15 @@ def criar_turma(request):
             return render(request,'usuarios/criar-turma.html',{'error_message':'Disciplina não encontrada!'})
         if Turma.objects.filter(disciplina=disciplina, semestre=semestre).exists():
             return render(request,'usuarios/criar-turma.html',{'error_message':'Já existe uma turma para essa disciplina no semestre informado.'})
-        nova_turma = Turma.objects.create(disciplina=disciplina, semestre=semestre)
+        # Obter professor selecionado
+        professor = None
+        if professor_id:
+            try:
+                professor = User.objects.get(id=professor_id)
+            except User.DoesNotExist:
+                return render(request,'usuarios/criar-turma.html',{'error_message':'Professor não encontrado!'})
+
+        nova_turma = Turma.objects.create(disciplina=disciplina, semestre=semestre, professor=professor)
         alunos = Aluno.objects.filter(id__in=alunos_ids)
         if not alunos.exists():
             return render(request,'usuarios/criar-turma.html',{'error_message':'Nenhum aluno foi selecionado!'})
@@ -263,7 +277,14 @@ def detalhar_turma(request,id_turma):
 @login_required
 def visualizar_disciplinas(request):
     search_query = request.GET.get('search', '').strip()
-    disciplinas = Disciplina.objects.all().order_by('periodo')
+    # Se for aluno, mostrar apenas as disciplinas em que está matriculado
+    is_student = False
+    if hasattr(request.user, 'aluno_profile') and request.user.aluno_profile is not None:
+        is_student = True
+        aluno = request.user.aluno_profile
+        disciplinas = Disciplina.objects.filter(turmas__alunos__aluno=aluno).distinct().order_by('periodo')
+    else:
+        disciplinas = Disciplina.objects.all().order_by('periodo')
 
     if search_query:
         disciplinas = disciplinas.filter(
@@ -283,9 +304,22 @@ def visualizar_disciplinas(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # Montar lista de itens com status/pagamento para renderização (mantendo paginação)
+    page_items = None
+    if is_student:
+        page_items = []
+        for disciplina in page_obj:
+            matriculado = AlunoTurma.objects.filter(aluno=aluno, turma__disciplina=disciplina).exists()
+            if matriculado:
+                page_items.append({'disciplina': disciplina, 'status': 'Cursando', 'pagamento': 'Pendente'})
+            else:
+                page_items.append({'disciplina': disciplina, 'status': 'Não matriculado', 'pagamento': 'N/D'})
+
     return render(request, 'usuarios/disciplinas.html', {
         'page_obj': page_obj,
-        'search_query': search_query
+        'page_items': page_items,
+        'search_query': search_query,
+        'is_student': is_student,
     })
 
 @login_required
@@ -324,7 +358,8 @@ def visualizar_alunos(request):
         alunos = Aluno.objects.filter(turmas__turma__professor=request.user).distinct().order_by('nome')
     elif hasattr(request.user, 'aluno_profile') and request.user.aluno_profile is not None:
         aluno = request.user.aluno_profile
-        alunos = Aluno.objects.filter(id=aluno.id)
+        # Redirecionar aluno diretamente para seu histórico
+        return redirect('historico_aluno', aluno_id=aluno.id)
     else:
         alunos = Aluno.objects.none()
     if search_query:
